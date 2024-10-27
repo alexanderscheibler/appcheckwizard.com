@@ -6,7 +6,7 @@ export default function Help() {
     const items = [
         {
             title: "Is my app always on?",
-            description: "Let's add monitoring and alerts so your team can catch critical issues and quickly resolve them before they affect your customers.",
+            description: "Adding monitoring and alerts so your team can catch critical issues and quickly resolve them before they affect your customers.",
         },
         {
             title: "Is my app working?",
@@ -14,7 +14,7 @@ export default function Help() {
         },
         {
             title: "Will my app keep working if I change things?",
-            description: "Setting up automated tests allows you to verify core that functionality still works every time an update is made.",
+            description: "Setting up automated tests allows you to verify that core functionality still works every time an update is made.",
         },
         {
             title: "Can my app scale as my business grows?",
