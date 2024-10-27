@@ -31,6 +31,8 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Build Next.js
         run: yarn build
+      - name: Copy CNAME file
+        run: cp public/CNAME out/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
