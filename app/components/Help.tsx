@@ -6,7 +6,7 @@ export default function Help() {
     const items = [
         {
             title: "Is my app always on?",
-            description: "Let's work together to configure monitoring and alerts, so critical issues are caught by your team and resolved before they affect your customers.",
+            description: "Let's add monitoring and alerts, so critical issues can be caught by your team and quickly resolved before they affect your customers.",
         },
         {
             title: "Is my app working?",
@@ -26,7 +26,7 @@ export default function Help() {
         },
         {
             title: "What happened with my app?!",
-            description: "With expertise in investigation and Root Cause Analysis (RCA), we can identify what happened, why it happened, and the steps to prevent it in the future.",
+            description: "With expertise in investigation and Root Cause Analysis (RCA), together we can identify what happened, why it happened, and the steps to prevent it in the future.",
         }
     ]
 
