@@ -26,7 +26,7 @@ export default function Help() {
         },
         {
             title: "What happened with my app?!",
-            description: "With expertise in investigation and Root Cause Analysis (RCA), together we can identify what happened, why it happened, and the steps to prevent it in the future.",
+            description: "With expertise in investigation and Root Cause Analysis (RCA), together we can identify what happened in an incident, why it happened, and the steps to prevent it in the future.",
         }
     ]
 
