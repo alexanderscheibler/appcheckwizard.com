@@ -1,0 +1,78 @@
+{
+  "name": "My Next.js Application",
+  "short_name": "AppCheckWizard",
+  "description": "Software Development, Quality Assurance (QA) for web applications, QA for mobile applications and Software Testing services for web and mobile applications.",
+  "start_url": "/",
+  "id": "AppCheckWizard",
+  "display": "standalone",
+  "theme_color": "#454e5d",
+  "orientation": "landscape",
+  "background_color": "#111827",
+  "icons": [
+    {
+      "src": "/images/favicon/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    },
+    {
+      "src": "/images/favicon/favicon-32x32.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    },
+    {
+      "src": "/images/favicon/favicon-16x16.png",
+      "type": "image/png",
+      "sizes": "16x16"
+    },
+    {
+      "src": "/images/favicon/favicon.ico",
+      "type": "image/ico",
+      "sizes": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Is my app always on?",
+      "short_name": "App Monitoring",
+      "description": "Setup monitoring and alerts for your app to catch critical issues before they impact your customers.",
+      "url": "/#help",
+      "icons": [{ "src": "/images/favicon/apple-touch-icon.png", "sizes": "180x180" }]
+    },
+
+    {
+     "name": "Is my app working?",
+      "short_name": "Functional Testing",
+      "description": "Functional testing to ensure core functionality works as expected.",
+      "url": "/#help",
+      "icons": [{ "src": "/images/favicon/apple-touch-icon.png", "sizes": "180x180" }]
+    },
+    {
+      "name": "Will my app keep working if I change things?",
+      "short_name": "Automated Testing",
+      "description": "Automated testing for reliable core functionality after updates.",
+      "url": "/#help",
+      "icons": [{ "src": "/images/favicon/apple-touch-icon.png", "sizes": "180x180" }]
+    },
+    {
+      "name": "Can my app scale as my business grows?",
+      "short_name": "Performance Testing",
+      "description": "Performance testing to evaluate app scalability for increased users.",
+      "url": "/#help",
+      "icons": [{ "src": "/images/favicon/apple-touch-icon.png", "sizes": "180x180" }]
+    },
+    {
+      "name": "Is my data safe and secure?",
+      "short_name": "Security Analysis",
+      "description": "Security analysis and compliance assessments, including LGPD in Brazil.",
+      "url": "/#help",
+      "icons": [{ "src": "/images/favicon/apple-touch-icon.png", "sizes": "180x180" }]
+    },
+    {
+      "name": "What happened with my app?!",
+      "short_name": "Root Cause Analysis",
+      "description": "Investigate issues with Root Cause Analysis to prevent future occurrences.",
+      "url": "/#help",
+      "icons": [{ "src": "/images/favicon/apple-touch-icon.png", "sizes": "180x180" }]
+    }
+  ]
+}
