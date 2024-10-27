@@ -3,6 +3,8 @@
 This is my portfolio site.
 
 ## Getting Started
+[![Deploy to GitHub Pages](https://github.com/alexanderscheibler/appcheckwizard.com/actions/workflows/deploy.yml/badge.svg)](https://github.com/alexanderscheibler/appcheckwizard.com/actions/workflows/deploy.yml)
+
 This is a [Next.js](https://nextjs.org) project using Node.js >= 22.
 
 Install the dependencies:
