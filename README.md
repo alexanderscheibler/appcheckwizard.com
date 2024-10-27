@@ -1,4 +1,5 @@
 # AppCheckWizard
+[![Jest unit test](https://github.com/alexanderscheibler/appcheckwizard.com/actions/workflows/jest.yml/badge.svg)](https://github.com/alexanderscheibler/appcheckwizard.com/actions/workflows/jest.yml) 
 [![Deploy to GitHub Pages](https://github.com/alexanderscheibler/appcheckwizard.com/actions/workflows/deploy.yml/badge.svg)](https://github.com/alexanderscheibler/appcheckwizard.com/actions/workflows/deploy.yml)
 
 This is my portfolio site.
