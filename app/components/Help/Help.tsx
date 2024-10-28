@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
-import { helpCards } from '@data/HelpCards';
+import {HelpCard, helpCards} from '@data/HelpCards';
 
 export default function Help() {
 
@@ -11,7 +11,7 @@ export default function Help() {
             <h2 className="text-3xl font-semibold text-center mb-12">How can I help?</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {helpCards.map((card, index) => (
+                {helpCards.map((card: HelpCard, index: number) => (
                     <div key={index}
                          className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
                         <div className="p-6">
