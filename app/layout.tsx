@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from 'next/font/google'
 import "./globals.css";
+import Script from "next/script";
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 
@@ -28,6 +29,7 @@ export default function RootLayout({
     >
     {children}
     </body>
+    <Script defer data-domain="appcheckwizard.com" src="https://plausible.io/js/script.js" id="plausible"></Script>
     </html>
   );
 }

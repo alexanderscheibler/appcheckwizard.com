@@ -39,3 +39,14 @@ export const mockHelpCardsWithNoData: HelpCard[] = [
     description: ""
   }
 ]
+
+const longItem = "A".repeat(600) // 600 characters
+export const mockHelpCardLongDescription = {
+  title: "Long Description Card",
+  description: longItem
+}
+
+export const mockHelpCardLongTitle = {
+  title: longItem,
+  description: "Long Title Card"
+}
