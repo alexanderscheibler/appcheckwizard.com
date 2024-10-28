@@ -23,8 +23,8 @@ export default function Footer() {
                   <CustomImage
                     src="/images/cc.svg"
                     alt="CC"
-                    width={24}  // specify width directly for Next.js Image
-                    height={24} // specify height directly
+                    width={24}
+                    height={24}
                     unoptimized
                   />
                   <CustomImage
