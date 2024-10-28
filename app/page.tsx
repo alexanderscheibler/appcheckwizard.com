@@ -7,6 +7,8 @@ import Projects from '@components/Projects'
 import Contact from '@components/Contact'
 import Footer from '@components/Footer'
 
+import { helpCards as skills } from '@data/HelpCards'
+
 export const metadata: Metadata = {
   title: 'AppCheckWizard - Mobile testing for your app',
   description: 'Backend developer and QA Tester, expertise in JavaScript, Python and Exploratory Testing for mobile applications.',
@@ -17,7 +19,7 @@ export default function Home() {
       <main className="min-h-screen bg-gray-900 text-gray-100">
         <Header/>
         <Hero/>
-        <Help/>
+        <Help skills={skills}/>
         <Projects/>
         <Contact/>
         <Footer/>

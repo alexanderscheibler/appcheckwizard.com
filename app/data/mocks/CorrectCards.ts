@@ -1,13 +1,6 @@
-export interface HelpCard {
-  title: string;
-  description: string;
-}
+import { HelpCard } from "@data/HelpCards";
 
-export interface HelpCardProps {
-  skills: HelpCard[];
-}
-
-export const helpCards: HelpCard[] = [
+export const mockValidCards: HelpCard[] = [
   {
     title: "Is my app always on?",
     description: "Adding monitoring and alerts so your team can catch critical issues and quickly resolve them before they affect your customers.",
