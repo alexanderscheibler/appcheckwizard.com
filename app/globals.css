@@ -8,6 +8,13 @@
   --background-end-rgb: 0, 0, 0;
 }
 
+@supports (font: -apple-system-body) {
+  html {
+    /* Enable dynamic text sizing on Apple devices for accessibility */
+    font: -apple-system-body;
+  }
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
