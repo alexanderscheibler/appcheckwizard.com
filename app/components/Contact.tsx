@@ -72,9 +72,10 @@ export default function Contact() {
 
       setSubmitStatus("success")
       setFormData({ name: "", email: "", message: "" })
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error submitting form:", error)
-      setErrorMessage(error.message || "Failed to submit form. Please try again.")
+      const errorMessage = error instanceof Error ? error.message : "Failed to submit form. Please try again."
+      setErrorMessage(errorMessage)
       setSubmitStatus("error")
     } finally {
       setIsSubmitting(false)
