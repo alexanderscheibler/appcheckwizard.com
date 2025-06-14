@@ -154,7 +154,7 @@ export default function Contact() {
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm text-green-800">Thank you for your message! I'll get back to you soon.</p>
+                    <p className="text-sm text-green-800">Thank you for your message! I&apos;ll get back to you soon.</p>
                   </div>
                 </div>
               </div>
