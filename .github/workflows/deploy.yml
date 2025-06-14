@@ -33,6 +33,8 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Build Next.js
         run: yarn build
+        env:
+          GITHUB_PAGES: 'true'
       - name: Copy CNAME file
         run: cp -r public/ out/
       - name: Upload artifact
