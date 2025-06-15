@@ -36,7 +36,11 @@ export default function Contact() {
     )
   }
 
-  const validateForm = (data: FormData): string | null => {
+  const validateForm = (data: FormData, gotchaValue: string): string | null => {
+    if (gotchaValue && gotchaValue.trim() !== "") {
+      return null
+    }
+
     if (!data.name.trim() || data.name.length < 2) {
       return "Name must be at least 2 characters long"
     }
@@ -55,8 +59,12 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    // Get the gotchaValue
+    const formElement = e.target as HTMLFormElement
+    const gotchaValue = (formElement.elements.namedItem('_gotcha') as HTMLInputElement)?.value || ""
+
     // Basic validation
-    const validationError = validateForm(formData)
+    const validationError = validateForm(formData, gotchaValue)
     if (validationError) {
       setErrorMessage(validationError)
       setSubmitStatus("error")
