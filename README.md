@@ -1,6 +1,5 @@
 # AppCheckWizard
 [![Jest unit test](https://github.com/alexanderscheibler/appcheckwizard.com/actions/workflows/jest.yml/badge.svg)](https://github.com/alexanderscheibler/appcheckwizard.com/actions/workflows/jest.yml) 
-[![Deploy to GitHub Pages](https://github.com/alexanderscheibler/appcheckwizard.com/actions/workflows/deploy.yml/badge.svg)](https://github.com/alexanderscheibler/appcheckwizard.com/actions/workflows/deploy.yml)
 
 ![Checkly](https://api.checklyhq.com/v1/badges/checks/f9efde56-b1c9-4e11-a524-25c296ca7aee?style=flat&theme=dark)
 

@@ -1,8 +1,5 @@
 import type { NextConfig } from 'next';
 
-const isGitHubPages = process.env.GITHUB_PAGES === 'true'
-const isProduction = process.env.NODE_ENV === 'production'
-
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   publicRuntimeConfig: {
@@ -11,13 +8,6 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_SUPABASE_DOMAIN: process.env.NEXT_PUBLIC_SUPABASE_DOMAIN,
     NEXT_PUBLIC_MOCK_ITEMS: process.env.NEXT_PUBLIC_MOCK_ITEMS,
   },
-
-  // Only for GitHub Pages deployment
-  ...(isGitHubPages && isProduction && {
-    assetPrefix: process.env.NODE_ENV === 'production' ? 'appcheckwizard.com' : '',
-    basePath: process.env.NODE_ENV === 'production' ? 'appcheckwizard.com' : '',
-    trailingSlash: true,
-  }),
 
   output: 'export',
   images: {
