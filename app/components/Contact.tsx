@@ -63,6 +63,13 @@ export default function Contact() {
       return
     }
 
+    // Double-check Supabase availability before submitting
+    if (!supabase) {
+      setErrorMessage("Database connection is not available")
+      setSubmitStatus("error")
+      return
+    }
+
     setIsSubmitting(true)
     setSubmitStatus("idle")
     setErrorMessage("")
