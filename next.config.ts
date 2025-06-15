@@ -9,8 +9,6 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_MOCK_ITEMS: process.env.NEXT_PUBLIC_MOCK_ITEMS,
   },
 
-  assetPrefix: process.env.NODE_ENV === 'production' ? 'appcheckwizard.com' : '',
-  basePath: process.env.NODE_ENV === 'production' ? 'appcheckwizard.com' : '',
   output: 'export',
   images: {
     unoptimized: true,
