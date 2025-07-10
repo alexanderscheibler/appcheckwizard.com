@@ -1,0 +1,11 @@
+.prose pre {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+.prose img {
+    padding: .3em;
+    margin: 1em auto;
+    border: 1px solid #969eaa;
+}
+

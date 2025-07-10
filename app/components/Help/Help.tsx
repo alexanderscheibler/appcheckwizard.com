@@ -11,7 +11,7 @@ const Help = ({ skills }: HelpCardProps) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {skills.map((card: HelpCard, index: number) => (
-            <article key={index}
+            <article data-testid={('article' + index)} key={card.title}
                  className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-2">{card.title}</h3>
