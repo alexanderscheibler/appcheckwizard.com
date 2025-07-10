@@ -74,7 +74,7 @@ describe('Help', () => {
   it('renders Help card 6', () => {
     render(<Help skills={mockValidCards} />);
 
-    const title = screen.getByText("What happened with my app\?\!");
+    const title = screen.getByText("What happened with my app?!");
     expect(title).toBeVisible();
 
     const description = screen.getByText("With expertise in investigation and Root Cause Analysis (RCA), together we can identify what happened in an incident, why it happened, and the steps to prevent it in the future.");
