@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { Montserrat } from 'next/font/google'
 import "./globals.css";
-import Script from "next/script";
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'AppCheckWizard - Backend Developer & QA Tester',
-  description: 'Backend developer and QA Tester, expertise in JavaScript, Python and Exploratory Testing for mobile applications.',
+  title: 'AppCheckWizard - Senior Software Developer & QA Tester',
+  description: 'Senior Software Developer and QA Tester, expertise in JavaScript, Python and Exploratory Testing for mobile applications.',
 };
 
 export default function RootLayout({
@@ -29,7 +28,6 @@ export default function RootLayout({
     >
     {children}
     </body>
-    <Script defer data-domain="appcheckwizard.com" src="https://plausible.io/js/script.js" id="plausible"></Script>
     </html>
   );
 }
