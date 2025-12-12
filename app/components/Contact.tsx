@@ -3,12 +3,12 @@
 import type React from "react"
 
 import { useState } from "react"
-import { supabase, isSupabaseAvailable } from "@utils/db/supabase"
 
 interface FormData {
   name: string
   email: string
   message: string
+  _gotcha: string
 }
 
 export default function Contact() {
@@ -17,30 +17,14 @@ export default function Contact() {
     name: "",
     email: "",
     message: "",
+    _gotcha: ""
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
   const [errorMessage, setErrorMessage] = useState("")
+  const [messageLength, setMessageLength] = useState(0)
 
-  // Check if Supabase is available
-  if (!isSupabaseAvailable()) {
-    return (
-      <div className="w-full max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold bg-gray-900 text-gray-100  mb-2">Contact Form</h2>
-          <p className="text-red-600">
-            Contact form is currently unavailable. Please check back later or contact me directly.
-          </p>
-        </div>
-      </div>
-    )
-  }
-
-  const validateForm = (data: FormData, gotchaValue: string): string | null => {
-    if (gotchaValue && gotchaValue.trim() !== "") {
-      return null
-    }
-
+  const validateForm = (data: FormData): string | null => {
     if (!data.name.trim() || data.name.length < 2) {
       return "Name must be at least 2 characters long"
     }
@@ -59,21 +43,12 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Get the gotchaValue
-    const formElement = e.target as HTMLFormElement
-    const gotchaValue = (formElement.elements.namedItem('_gotcha') as HTMLInputElement)?.value || ""
+    if (isSubmitting) return
 
     // Basic validation
-    const validationError = validateForm(formData, gotchaValue)
+    const validationError = validateForm(formData)
     if (validationError) {
       setErrorMessage(validationError)
-      setSubmitStatus("error")
-      return
-    }
-
-    // Double-check Supabase availability before submitting
-    if (!supabase) {
-      setErrorMessage("Database connection is not available")
       setSubmitStatus("error")
       return
     }
@@ -83,23 +58,23 @@ export default function Contact() {
     setErrorMessage("")
 
     try {
-      // Insert data into Supabase
-      const { error } = await supabase.from("contact_submissions").insert([
-        {
-          name: formData.name.trim(),
-          email: formData.email.trim().toLowerCase(),
-          message: formData.message.trim(),
-          submitted_at: new Date().toISOString(),
-          user_agent: navigator.userAgent,
+      // Send data to the API
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      ])
+        body: JSON.stringify(formData),
+      })
 
-      if (error) {
-        throw error
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit form')
       }
 
       setSubmitStatus("success")
-      setFormData({ name: "", email: "", message: "" })
+      setFormData({ name: "", email: "", message: "", _gotcha: "" })
+      setMessageLength(0)
     } catch (error: unknown) {
       console.error("Error submitting form:", error)
       const errorMessage = error instanceof Error ? error.message : "Failed to submit form. Please try again."
@@ -111,6 +86,9 @@ export default function Contact() {
   }
 
   const handleInputChange = (field: keyof FormData, value: string) => {
+    if (field === "message") {
+      setMessageLength(value.length)
+    }
     setFormData((prev) => ({ ...prev, [field]: value }))
     if (submitStatus === "error") {
       setSubmitStatus("idle")
@@ -130,11 +108,13 @@ export default function Contact() {
                 type="text"
                 id="name"
                 name="name"
-                className="w-full px-4 py-2 rounded bg-gray-700"
+                className="w-full px-4 py-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-white"
                 autoComplete="name"
                 value={formData.name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
                 maxLength={100}
+                aria-required="true"
+                aria-invalid={submitStatus === "error" && !formData.email.trim()}
                 disabled={isSubmitting}
                 required
               />
@@ -145,27 +125,49 @@ export default function Contact() {
                 type="email"
                 id="email"
                 name="email"
-                className="w-full px-4 py-2 rounded bg-gray-700"
+                className="w-full px-4 py-2 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-white"
                 autoComplete="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 maxLength={255}
+                aria-required="true"
+                aria-invalid={submitStatus === "error" && !formData.email.trim()}
                 disabled={isSubmitting}
                 required
               />
             </div>
-            <input type="text" name="_gotcha" className="hidden" aria-hidden="true" tabIndex={-1} autoComplete="off" />
+            <input
+              type="text"
+              name="_gotcha"
+              value={formData._gotcha}
+              onChange={(e) => handleInputChange("_gotcha", e.target.value)}
+              className="hidden"
+              aria-hidden="true"
+              tabIndex={-1}
+              autoComplete="off"
+              style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px" }}
+            />
             <div>
-              <label htmlFor="message" className="block mb-2">Message *</label>
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="message" className="block">
+                  Message *
+                </label>
+                <span className="text-sm text-gray-400" aria-live="polite">
+                  {messageLength} / 1024
+                </span>
+              </div>
               <textarea
                 id="message"
                 name="message"
                 rows={4}
-                className="w-full px-4 py-2 rounded bg-gray-700"
+                className="w-full px-4 py-2 rounded bg-gray-700  focus:outline-none focus:ring-2 focus:ring-offset-white"
                 value={formData.message}
                 onChange={(e) => handleInputChange("message", e.target.value)}
                 maxLength={1024}
                 disabled={isSubmitting}
+                aria-required="true"
+                aria-invalid={submitStatus === "error" && !formData.message.trim()}
+                aria-describedby="message-hint"
                 required>
               </textarea>
             </div>
@@ -211,6 +213,7 @@ export default function Contact() {
               type="submit"
               disabled={isSubmitting}
               className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label={isSubmitting ? "Sending message" : "Send message"}
             >
               {isSubmitting ? (
                 <>
@@ -219,6 +222,7 @@ export default function Contact() {
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
+                    aria-hidden="true"
                   >
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path
