@@ -8,8 +8,8 @@ import Head from '@components/Blog/Head';
 const montserrat = Montserrat({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'AppCheckWizard - Backend Developer & QA Tester',
-  description: 'Backend developer and QA Tester, expertise in JavaScript, Python and Exploratory Testing for mobile applications.',
+  title: 'AppCheckWizard | Blog - Senior Software Developer & QA Tester',
+  description: 'Senior Software Developer and QA Tester, expertise in JavaScript, Python and Exploratory Testing for mobile applications.',
 };
 
 export default function RootLayout({
