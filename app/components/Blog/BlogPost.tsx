@@ -1,5 +1,3 @@
-'use client'
-
 import { PostItem } from '@data/blog/interfaces/PostMetadata'
 import Comments from '@components/Blog/Comments'
 import TagsList from '@components/Blog/TagsList';
@@ -10,7 +8,7 @@ interface BlogPostProps {
   post: PostItem
 }
 
-export default function BlogPost({ post }: Readonly<BlogPostProps>) {
+export default async function BlogPost({ post }: Readonly<BlogPostProps>) {
   return (
     <div className="container mx-auto pt-16 md:pt-0 px-4 py-8">
       <header className="flex justify-between items-center pt-16 md:pt-0 mb-8">
@@ -49,7 +47,7 @@ export default function BlogPost({ post }: Readonly<BlogPostProps>) {
           prose-code:text-gray-300
           prose-ul:list-disc
           prose-ol:list-decimal"
-          dangerouslySetInnerHTML={{__html: post.content}}
+             dangerouslySetInnerHTML={{__html: post.content}}
         />
         {post.tags && (
           <TagsList tags={post.tags}/>

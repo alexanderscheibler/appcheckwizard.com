@@ -38,6 +38,9 @@
       "@data/*": [
         "./app/data/*"
       ],
+      "@actions/*": [
+        "./app/actions/*"
+      ],
       "@utils/*": [
         "./utils/*"
       ]

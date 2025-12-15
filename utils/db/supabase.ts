@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 import { ContactSubmission } from "@data/interfaces/Contact";
+import { CommentSubmission } from "@data/interfaces/Comments";
 
 const supabaseUrl = process.env.SUPABASE_URL
 const supabasePublishableKey = process.env.SUPABASE_PUBLISHABLE_KEY
@@ -71,4 +72,62 @@ export async function insertContactSubmission(data: ContactSubmission) {
   }
 
   return { success: true }
+}
+
+/**
+ * Insert a comment into the database
+ * Comments are set to 'approved: false' by default and require moderation
+ */
+export async function insertComment(data: CommentSubmission) {
+  const supabase = getSupabaseClient()
+
+  const { error } = await supabase.from("comments").insert([
+    {
+      created_at: new Date().toISOString(),
+      post_slug: data.post_slug,
+      author_name: data.author_name.trim(),
+      author_email: data.author_email.trim().toLowerCase(),
+      content: data.content.trim(),
+      approved: false
+    },
+  ])
+
+  if (error) {
+    console.error("Database insertion error:", {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+    })
+
+    throw new SupabaseDatabaseError("Failed to save comment", error)
+  }
+
+  return { success: true }
+}
+
+/**
+ * Fetch approved comments for a specific post
+ * This runs server-side at build/revalidation time
+ */
+export async function getApprovedComments(postSlug: string): Promise<PublicComment[]> {
+  const supabase = getSupabaseClient() // <-- Using the Anon Key client now
+
+  const { data, error } = await supabase
+    .from("comments")
+    .select("*")
+    .eq("post_slug", postSlug)
+    // We keep this .eq as a good practice, even though RLS strictly enforces it now
+    .eq("approved", true)
+    .order("created_at", { ascending: false })
+
+  if (error) {
+    console.error("Error fetching comments:", {
+      code: error.code,
+      message: error.message,
+      postSlug,
+    })
+    return []
+  }
+
+  return data || []
 }
