@@ -3,7 +3,7 @@ import { Links } from "@data/interfaces/Links";
 
 export const personalInfo: PersonalInfo = {
   name: 'AppCheckWizard',
-  role: 'Software Quality Assurance',
+  role: 'Senior Developer • QA Engineer',
   description: 'Coding, testing, monitoring, and improving processes to keep your business moving forward.',
   location: 'New Brunswick, CA',
 };

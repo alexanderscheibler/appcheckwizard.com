@@ -17,7 +17,7 @@ export function Sidebar() {
 
   return (
     <>
-      <header className="hidden p-4 py-8 md:flex md:flex-col md:w-64 md:fixed md:inset-y-0 bg-gray-100 dark:bg-gray-800" id="top">
+      <header className="hidden p-4 py-8 md:flex md:flex-col md:w-[18.2rem] md:fixed md:inset-y-0 bg-gray-100 dark:bg-gray-800" id="top">
         <div className="mb-6 md:space-y-6">
           <h2 className="text-2xl font-bold">
             <Link href={`/`} className="text-xl font-semibold hover:underline" title="Home page">

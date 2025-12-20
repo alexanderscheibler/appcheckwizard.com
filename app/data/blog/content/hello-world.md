@@ -9,6 +9,10 @@ author: Alexander S
 summary: With comments
 ---
 
+```js
+    console.log("Hello World");
+```
+
 ![Tux, the Linux mascot](/images/appcheck.jpeg)
 This post has comments!
 

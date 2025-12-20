@@ -8,6 +8,7 @@ import remarkRehype from 'remark-rehype'
 import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import rehypeHighlight from 'rehype-highlight'
+import rehypeRaw from 'rehype-raw'
 import rehypeStringify from 'rehype-stringify'
 import { PostItem } from '@data/blog/interfaces/PostMetadata'
 import remarkToc from 'remark-toc'
@@ -54,10 +55,10 @@ export async function getPostData(id: string, postsDirectory: string): Promise<P
       allowDangerousHtml: true      // Allow HTML in markdown
     })
     .use(rehypeSlug)                // Add ids to headings
+    .use(rehypeRaw)                 // Process raw HTML
     .use(rehypeAutolinkHeadings, {  // Add anchor links to headings
-      behavior: 'append',
       properties: {
-        className: ['anchor-link'],
+        className: ['anchor-link', 'ml-2', 'opacity-0', 'group-hover:opacity-60'],
         ariaHidden: true,
         tabIndex: -1
       },
