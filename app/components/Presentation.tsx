@@ -224,6 +224,8 @@ function CoverSlide({ slide }: { slide: CoverSlideData }) {
         alt="Cover Background"
         fill
         sizes="(max-width: 768px) 100vw, 1280px"
+        unoptimized={true}
+        preload={true}
       ></CustomImage>
       <div style={{ position: 'absolute', left: slide.titleStyle.left, top: slide.titleStyle.top, width: slide.titleStyle.width }}>
         <h1
@@ -359,6 +361,8 @@ function ContentImageMidSlide({ slide }: { slide: ContentImageSlideData }) {
           src={slide.image}
           alt={slide.imageAlt || 'Slide image'}
           fill
+          unoptimized={true}
+          preload={true}
           sizes="(max-width: 768px) 100vw, 1280px"
           style={{ objectFit: 'contain', objectPosition: 'top center' }}
         />
@@ -505,7 +509,8 @@ function ImageFullSlide({ slide }: { slide: ImageFullSlideData }) {
         src={slide.image}
         alt={slide.imageAlt}
         fill
-        priority
+        unoptimized={true}
+        preload={true}
         sizes="100vw"
         style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
       />
@@ -561,6 +566,8 @@ function ContentTwoColSlide({ slide }: { slide: ContentTwoColSlideData }) {
           fill
           sizes="50vw"
           style={{ objectFit: 'contain', objectPosition: 'top left' }}
+          unoptimized={true}
+          preload={true}
         />
       </div>
       {l.caption && (
@@ -707,6 +714,8 @@ function ContactSlide({ slide }: { slide: ContactSlideData }) {
           width={220}
           height={220}
           style={{ position: 'absolute', top: 20, left: 20, objectFit: 'contain' }}
+          unoptimized={true}
+          preload={true}
         />
       )}
       {slide.title && <SlideTitle text={slide.title} style={{ left: 85, top: 71, fontSize: 94 }} />}
@@ -745,6 +754,8 @@ function ContactSlide({ slide }: { slide: ContactSlideData }) {
           width={400}
           height={400}
           style={{ position: 'absolute', top: 203, right: 70, objectFit: 'contain' }}
+          unoptimized={true}
+          preload={true}
         />
       )}
     </Parchment>
@@ -761,6 +772,8 @@ function ReferencesSlide({ slide }: { slide: ReferencesSlideData }) {
           width={160}
           height={160}
           style={{ position: 'absolute', top: 30, right: 30, objectFit: 'contain' }}
+          unoptimized={true}
+          preload={true}
         />
       )}
       {slide.title && <SlideTitle text={slide.title} style={{ top: 63 }} />}
@@ -945,9 +958,10 @@ export default function Presentation({ slides }: PresentationProps) {
             <SlideWrapper key={slide.id} slide={slide} direction={direction} />
 
             {/* Hidden Preload Buffer */}
+            {/* Preload Buffer: Renders the next 2 slides invisibly to force network fetch */}
             <div style={{ display: 'none' }} aria-hidden="true">
-              {slides.slice(current + 1, current + 4).map((s) => (
-                <SlideRenderer key={s.id} slide={s} />
+              {slides.slice(current + 1, current + 3).map((s) => (
+                <SlideRenderer key={`preload-${s.id}`} slide={s} />
               ))}
             </div>
           </div>
