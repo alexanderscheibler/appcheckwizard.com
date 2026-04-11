@@ -20,6 +20,7 @@ import type {
   ContactSlide as ContactSlideData,
   ReferencesSlide as ReferencesSlideData
 } from '../data/talks/2026-atlseccon/SlidesData';
+import CustomImage from "@components/CustomImage";
 
 // ─── Primitive renderers ───────────────────────────────────────────────────────
 
@@ -218,11 +219,12 @@ function BorderBox({
 function CoverSlide({ slide }: { slide: CoverSlideData }) {
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-      <img
+      <CustomImage style={{ objectFit: 'contain', objectPosition: 'center'  }}
         src={slide.bgImage}
         alt="Cover Background"
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
-      />
+        fill
+        sizes="(max-width: 768px) 100vw, 1280px"
+      ></CustomImage>
       <div style={{ position: 'absolute', left: slide.titleStyle.left, top: slide.titleStyle.top, width: slide.titleStyle.width }}>
         <h1
           data-slide-display
@@ -353,10 +355,12 @@ function ContentImageMidSlide({ slide }: { slide: ContentImageSlideData }) {
     <Parchment>
       {slide.title && <SlideTitle text={slide.title} />}
       <div style={{ position: 'absolute', ...imgStyle, overflow: 'hidden' }}>
-        <img
+        <CustomImage
           src={slide.image}
           alt={slide.imageAlt || 'Slide image'}
-          style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'top center' }}
+          fill
+          sizes="(max-width: 768px) 100vw, 1280px"
+          style={{ objectFit: 'contain', objectPosition: 'top center' }}
         />
       </div>
 
@@ -497,10 +501,13 @@ function ContentBoxSlide({ slide }: { slide: ContentBoxSlideData }) {
 function ImageFullSlide({ slide }: { slide: ImageFullSlideData }) {
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: '#000' }}>
-      <img
+      <CustomImage
         src={slide.image}
-        alt={slide.imageAlt || 'Full slide image'}
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }}
+        alt={slide.imageAlt}
+        fill
+        priority
+        sizes="100vw"
+        style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
       />
       <div style={{
         position: 'absolute',
@@ -548,7 +555,13 @@ function ContentTwoColSlide({ slide }: { slide: ContentTwoColSlideData }) {
     <Parchment>
       {slide.title && <SlideTitle text={slide.title} />}
       <div style={{ position: 'absolute', ...l.imageStyle, overflow: 'hidden' }}>
-        <img src={l.image} alt={l.imageAlt || 'Left content'} style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'top left' }} />
+        <CustomImage
+          src={l.image}
+          alt={l.imageAlt || 'Left content'}
+          fill
+          sizes="50vw"
+          style={{ objectFit: 'contain', objectPosition: 'top left' }}
+        />
       </div>
       {l.caption && (
         <p style={{
@@ -688,10 +701,12 @@ function ContactSlide({ slide }: { slide: ContactSlideData }) {
   return (
     <Parchment>
       {slide.logo && (
-        <img
+        <CustomImage
           src={slide.logo}
           alt="Logo"
-          style={{ position: 'absolute', top: 20, left: 20, width: 220, height: 'auto', objectFit: 'contain' }}
+          width={220}
+          height={220}
+          style={{ position: 'absolute', top: 20, left: 20, objectFit: 'contain' }}
         />
       )}
       {slide.title && <SlideTitle text={slide.title} style={{ left: 85, top: 71, fontSize: 94 }} />}
@@ -724,10 +739,12 @@ function ContactSlide({ slide }: { slide: ContactSlideData }) {
         ))}
       </div>
       {slide.card && (
-        <img
+        <CustomImage
           src={slide.card}
           alt={slide.cardAlt || 'Contact Card'}
-          style={{ position: 'absolute', top: 203, right: 70, width: 400, height: 'auto', objectFit: 'contain' }}
+          width={400}
+          height={400}
+          style={{ position: 'absolute', top: 203, right: 70, objectFit: 'contain' }}
         />
       )}
     </Parchment>
@@ -738,10 +755,12 @@ function ReferencesSlide({ slide }: { slide: ReferencesSlideData }) {
   return (
     <Parchment>
       {slide.logo && (
-        <img
+        <CustomImage
           src={slide.logo}
           alt="Logo"
-          style={{ position: 'absolute', top: 30, right: 30, width: 160, height: 'auto', objectFit: 'contain', zIndex: 2 }}
+          width={160}
+          height={160}
+          style={{ position: 'absolute', top: 30, right: 30, objectFit: 'contain' }}
         />
       )}
       {slide.title && <SlideTitle text={slide.title} style={{ top: 63 }} />}

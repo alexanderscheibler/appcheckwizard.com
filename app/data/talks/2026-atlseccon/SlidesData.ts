@@ -202,7 +202,7 @@ const slides: Slide[] = [
   {
     id: 1,
     type: 'cover',
-    bgImage: '/talks/atlseccon2026/slides/slide1-fortune-tiger.png',
+    bgImage: '/talks/atlseccon2026/slides/slide1-fortune-tiger.webp',
     title: 'A Tale of Subdomain Takeover',
     titleStyle: {
       left: 97, top: 624, width: 824,
@@ -249,7 +249,7 @@ const slides: Slide[] = [
     id: 5,
     type: 'content-image-top',
     title: 'The Legacy Site',
-    image: '/talks/atlseccon2026/slides/slide5-legacy-site.png',
+    image: '/talks/atlseccon2026/slides/slide5-legacy-site.webp',
     imageAlt: 'Legacy Product Passport website screenshot',
     imageStyle: { top: 105, left: 240, width: 800, height: 530 },
   },
@@ -292,7 +292,7 @@ const slides: Slide[] = [
     id: 8,
     type: 'content-image-mid',
     title: 'The Bucket Limit Problem',
-    image: '/talks/atlseccon2026/slides/slide8-aws-quotas.png',
+    image: '/talks/atlseccon2026/slides/slide8-aws-quotas.webp',
     imageAlt: 'AWS S3 Service quotas screenshot',
     imageCaption: 'AWS S3 Service quotas: limited number of S3 buckets',
     imageStyle: { top: 105, left: 280, width: 720, height: 310 },
@@ -310,7 +310,7 @@ const slides: Slide[] = [
     type: 'content-two-col',
     title: 'The Script We Needed',
     leftContent: {
-      image: '/talks/atlseccon2026/slides/slide9-code.png',
+      image: '/talks/atlseccon2026/slides/slide9-code.webp',
       imageAlt: 'Sample bucket cleanup script code',
       imageStyle: { top: 210, left: 50, width: 590, height: 330 },
       caption: 'Sample automated bucket cleanup script',
@@ -390,7 +390,7 @@ const slides: Slide[] = [
   {
     id: 13,
     type: 'image-full',
-    image: '/talks/atlseccon2026/slides/slide13-tiger.png',
+    image: '/talks/atlseccon2026/slides/slide13-tiger.jpg',
     imageAlt: 'Sumatran tiger walking at Tierpark Berlin',
     attribution: 'Picture: "Sumatran tiger walking in the Tierpark, Berlin", Captain Herbert, CC BY-SA 3.0, via Wikimedia Commons',
     attributionLink: 'https://commons.wikimedia.org/wiki/File:Sumatran_Tiger_Berlin_Tierpark.jpg',
@@ -431,7 +431,7 @@ const slides: Slide[] = [
     id: 16,
     type: 'content-image-mid',
     title: 'Deleted bucket',
-    image: '/talks/atlseccon2026/slides/slide16-404.png',
+    image: '/talks/atlseccon2026/slides/slide16-404.webp',
     imageAlt: '404 Not Found — NoSuchBucket error page',
     imageStyle: { top: 105, left: 160, width: 960, height: 530 },
   },
@@ -494,7 +494,7 @@ const slides: Slide[] = [
     id: 20,
     type: 'content-image-mid',
     title: 'Subdomain Takeover',
-    image: '/talks/atlseccon2026/slides/slide20-diagram.png',
+    image: '/talks/atlseccon2026/slides/slide20-diagram.webp',
     imageAlt: 'Sequence diagram showing DNS, CloudFront, and AWS S3 request flow for subdomain takeover',
     imageStyle: { top: 105, left: 120, width: 1040, height: 545 },
   },
@@ -763,14 +763,14 @@ const slides: Slide[] = [
     id: 32,
     type: 'contact',
     title: 'Thank you!',
-    logo: '/talks/atlseccon2026/slides/slide32-fortune-tiger-logo.png',
+    logo: '/talks/atlseccon2026/slides/slide32-fortune-tiger-logo.webp',
     name: 'Alexander Scheibler (he/him)',
     bullets: ['From New Brunswick', 'Senior Software Developer'],
     links: [
       { text: 'appcheckwizard.com', href: 'https://appcheckwizard.com', color: COLORS.link },
       { text: 'admin@appcheckwizard.com', href: 'mailto:admin@appcheckwizard.com', color: COLORS.link },
     ],
-    card: '/talks/atlseccon2026/slides/slide32-qrcard.png',
+    card: '/talks/atlseccon2026/slides/slide32-qrcard.webp',
     cardAlt: 'Alexander S, CTFL – Senior Software Developer LinkedIn QR card',
   },
 
@@ -779,7 +779,7 @@ const slides: Slide[] = [
     id: 33,
     type: 'references',
     title: 'References and Resources',
-    logo: '/talks/atlseccon2026/slides/slide32-fortune-tiger-logo.png',
+    logo: '/talks/atlseccon2026/slides/slide32-fortune-tiger-logo.webp',
     refs: [
       {
         text: 'AWS: Deleting a general purpose bucket',
@@ -812,7 +812,7 @@ const slides: Slide[] = [
     id: 34,
     type: 'references',
     title: 'References and Resources',
-    logo: '/talks/atlseccon2026/slides/slide32-fortune-tiger-logo.png',
+    logo: '/talks/atlseccon2026/slides/slide32-fortune-tiger-logo.webp',
     refs: [
       {
         text: 'can-i-take-over-xyz',
