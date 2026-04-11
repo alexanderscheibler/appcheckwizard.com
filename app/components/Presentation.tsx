@@ -249,6 +249,21 @@ function CoverSlide({ slide }: { slide: CoverSlideData }) {
 
 function VideoSlide({ slide }: { slide: VideoSlideData }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Kill the video download when the slide unmounts
+  useEffect(() => {
+    const video = videoRef.current;
+
+    return () => {
+      // Cleanup function that runs when leaving the slide
+      if (video) {
+        video.pause();
+        video.removeAttribute('src'); // Clear out any direct src
+        video.load(); // Force the browser to abort the network request
+      }
+    };
+  }, []);
+
   return (
     <Parchment>
       {slide.title && <SlideTitle text={slide.title} style={{ top: 30 }} />}
