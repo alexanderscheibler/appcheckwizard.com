@@ -21,7 +21,7 @@ const Help = ({ skills }: HelpCardProps) => {
           ))}
         </div>
         <div className="flex items-center justify-center">
-          <Link href="#projects" aria-label="Projects. What have I done" className="pt-14 inline-block animate-bounce">
+          <Link href="#talks" aria-label="Talks. Where have I spoken?" className="pt-14 inline-block animate-bounce">
             <ChevronDown size={32}/>
           </Link>
         </div>
