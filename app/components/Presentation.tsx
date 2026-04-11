@@ -271,6 +271,7 @@ function VideoSlide({ slide }: { slide: VideoSlideData }) {
           <video
             ref={videoRef}
             controls
+            preload="none"
             style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: 2 }}
             poster={slide.poster || undefined}
           >
@@ -959,10 +960,14 @@ export default function Presentation({ slides }: PresentationProps) {
 
             {/* Hidden Preload Buffer */}
             {/* Preload Buffer: Renders the next 2 slides invisibly to force network fetch */}
+            {/* Filter out videos from the preload */ }
             <div style={{ display: 'none' }} aria-hidden="true">
-              {slides.slice(current + 1, current + 3).map((s) => (
-                <SlideRenderer key={`preload-${s.id}`} slide={s} />
-              ))}
+              {slides
+                .slice(current + 1, current + 3)
+                .filter((s) => s.type !== 'video')
+                .map((s) => (
+                  <SlideRenderer key={`preload-${s.id}`} slide={s} />
+                ))}
             </div>
           </div>
         </div>
