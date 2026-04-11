@@ -669,9 +669,9 @@ function ToolkitSlide({ slide }: { slide: ToolkitSlideData }) {
           <div style={{
             position: 'absolute',
             top: 283, left: 530,
-            width: 30, height: 159,
+            width: 30, height: 170,
             fontFamily: 'var(--font-body)',
-            fontSize: 94,
+            fontSize: 84,
             color: '#3D2314',
             lineHeight: 1,
             display: 'flex',
@@ -943,6 +943,13 @@ export default function Presentation({ slides }: PresentationProps) {
             }}
           >
             <SlideWrapper key={slide.id} slide={slide} direction={direction} />
+
+            {/* Hidden Preload Buffer */}
+            <div style={{ display: 'none' }} aria-hidden="true">
+              {slides.slice(current + 1, current + 4).map((s) => (
+                <SlideRenderer key={s.id} slide={s} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
