@@ -12,6 +12,7 @@ export default function CustomImage({ src, alt, ...props }: ImageProps) {
       unoptimized={isSvg}
       sizes={props.sizes || "(max-width: 768px) 100vw, 1280px"}
       decoding="sync"
+      loading="eager"
       {...props}
     />
   )
