@@ -668,7 +668,7 @@ function ToolkitSlide({ slide }: { slide: ToolkitSlideData }) {
         <>
           <div style={{
             position: 'absolute',
-            top: 293, left: 530,
+            top: 283, left: 530,
             width: 30, height: 159,
             fontFamily: 'var(--font-body)',
             fontSize: 94,

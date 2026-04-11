@@ -102,7 +102,7 @@ export default function Talks() {
           <p>More talks to come!</p>
         </div>
         <div className="flex items-center justify-center">
-          <Link href="#contact" aria-label="Contact" className="pt-14 inline-block animate-bounce">
+          <Link href="#projects" aria-label="Projects" className="pt-14 inline-block animate-bounce">
             <ChevronDown size={32} />
           </Link>
         </div>
