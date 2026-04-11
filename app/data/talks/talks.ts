@@ -22,7 +22,7 @@ export const talks: Talk[] = [
     date: "April 2026",
     tags: ["aws", "s3", "subdomain-takeover", "dangling-CNAME"],
     slidesUrl: "/talks/2026/atlseccon",
-    imgSrc: "/talks/atlseccon2026/fortune_tiger.png",
+    imgSrc: "/talks/atlseccon2026/slides/thumb-fortune-tiger.webp",
     imgAlt: "AtlSecCon 2026 – Fortune Tiger talk thumbnail"
   },
 ];
