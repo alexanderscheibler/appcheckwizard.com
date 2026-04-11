@@ -17,10 +17,16 @@ const parchment = localFont({
     { path: './fonts/ParchmentMF.woff2', weight: '400', style: 'normal' }
   ],
   variable: '--font-parchment',
-  display: "swap",
+  display: 'block',
+  fallback: ['Papyrus', 'fantasy', 'serif']
 });
 
+const siteURL = process.env.NEXT_PUBLIC_SITE_URL
+  ? `https://${process.env.NEXT_PUBLIC_SITE_URL}`
+  : 'http://localhost:3000';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteURL),
   title: 'AppCheckWizard - Senior Software Developer & QA Tester',
   description: 'Senior Software Developer and QA Tester, expertise in JavaScript, Python and Exploratory Testing for mobile applications.',
 };

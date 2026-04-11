@@ -1,34 +1,28 @@
-// slides-data.ts
 // All 34 slides for "A Tale of Subdomain Takeover"
-// Fonts: Josefin Sans (Google Fonts), ParchmentMF (system font)
+// Fonts: Josefin Sans (Google Fonts), ParchmentMF (system/web font)
 // Slide canvas: 1280 x 720px (16:9)
 // Coordinates derived from original PPTX at 1280x720 scale
 
 import type { CSSProperties } from 'react';
 
-// Theme colors extracted from PPTX
+// ─── Theme ────────────────────────────────────────────────────────────────────
+// Single source of truth for all colors. Use COLORS.* everywhere in slide data.
 export const COLORS = {
-  brown: '#3D2314',        // main text color on parchment
-  brownLight: '#5C3317',   // lighter brown text
-  link: '#0000FF',         // hyperlinks
-  red: '#941100',          // warning/alert red
-  redBright: '#CC0000',    // bright red (Warning slide)
-  gold: '#F6F2A2',         // slide 1 title yellow
-  goldShadow: '#84231E',   // slide 1 title shadow
-};
+  brown:      '#3D2314', // main text color on parchment
+  brownLight: '#5C3317', // lighter brown / captions
+  link:       '#0000FF', // hyperlinks
+  red:        '#941100', // warning / alert red
+  redBright:  '#CC0000', // bright red (Warning slide)
+  gold:       '#F6F2A2', // cover title yellow
+  goldShadow: '#84231E', // cover title shadow
+} as const;
 
-export const SLIDE_WIDTH = 1280;
+export const SLIDE_WIDTH  = 1280;
 export const SLIDE_HEIGHT = 720;
 
-// The ornament SVG used between chapter title and subtitle
-export const ORNAMENT_SVG = `<svg viewBox="0 0 321 15" xmlns="http://www.w3.org/2000/svg">
-  <path d="M0,7.5 Q40,0 80,7.5 Q120,15 160,7.5 Q200,0 240,7.5 Q280,15 321,7.5" 
-        stroke="#5C3317" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
-  <path d="M130,7.5 Q160,0 190,7.5" stroke="#5C3317" strokeWidth="2" fill="none"/>
-</svg>`;
-
+// Inline SVG for diamond bullet points used in Paragraph
 export const BULLETS_SVG = `<svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-  <path d="M12 2 C14.5 4, 20 6.5, 22 12 C20 17.5, 14.5 20, 12 22 C9.5 20, 4 17.5, 2 12 C4 6.5, 9.5 4, 12 2 Z" 
+  <path d="M12 2 C14.5 4, 20 6.5, 22 12 C20 17.5, 14.5 20, 12 22 C9.5 20, 4 17.5, 2 12 C4 6.5, 9.5 4, 12 2 Z"
         fill="#4a2c1d"/>
 </svg>`;
 
@@ -88,11 +82,12 @@ export interface ChapterSlide extends BaseSlide {
   hasOrnament: boolean;
   titleSize?: number;
   centered?: boolean;
-  fontFamily?: string;
   titleStyle?: CSSProperties;
 }
 
 export interface ContentImageSlide extends BaseSlide {
+  // 'content-image-top' and 'content-image-mid' share the same renderer.
+  // Keep both values so existing slide data needs no edits, but treat them identically.
   type: 'content-image-top' | 'content-image-mid';
   image: string;
   imageAlt: string;
@@ -187,37 +182,33 @@ export interface ReferencesSlide extends BaseSlide {
 }
 
 export type Slide =
-| CoverSlide
-| VideoSlide
-| ChapterSlide
-| ContentImageSlide
-| ContentBoxSlide
-| ContentTwoColSlide
-| ContentTextSlide
-| ImageFullSlide
-| ContentSplitBoxSlide
-| ToolkitSlide
-| ContactSlide
-| ReferencesSlide;
+  | CoverSlide
+  | VideoSlide
+  | ChapterSlide
+  | ContentImageSlide
+  | ContentBoxSlide
+  | ContentTwoColSlide
+  | ContentTextSlide
+  | ImageFullSlide
+  | ContentSplitBoxSlide
+  | ToolkitSlide
+  | ContactSlide
+  | ReferencesSlide;
 
-// slides array — each slide is { id, type, ...props }
-// Types: 'cover' | 'video' | 'chapter' | 'content' | 'image-full' | 'contact' | 'references'
+// ─── Slides ───────────────────────────────────────────────────────────────────
 const slides: Slide[] = [
 
   // ─── SLIDE 1: Cover ──────────────────────────────────────────────────────────
   {
     id: 1,
     type: 'cover',
-    // Full-bleed Fortune Tiger image background
     bgImage: '/talks/atlseccon2026/slides/slide1-fortune-tiger.png',
     title: 'A Tale of Subdomain Takeover',
-    // Title position from XML: x=97, y=624, w=824, h=99 (at 1280x720)
     titleStyle: {
       left: 97, top: 624, width: 824,
-      fontSize: 91,           // sz from XML context (~9100 hundredths of a point → 91pt scaled)
-      color: '#F6F2A2',
-      textShadow: '2px 2px 6px #84231E, -1px -1px 4px #84231E',
-      fontFamily: '"ParchmentMF", sans-serif',
+      fontSize: 54,
+      color: COLORS.gold,
+      textShadow: `2px 2px 6px ${COLORS.goldShadow}, -1px -1px 4px ${COLORS.goldShadow}`,
       fontWeight: '300',
       lineHeight: 1.05,
     },
@@ -249,7 +240,6 @@ const slides: Slide[] = [
     type: 'chapter',
     title: 'Chapter 1',
     subtitle: 'How we got here',
-    fontFamily: '"ParchmentMF", sans-serif',
     hasOrnament: true,
     centered: true,
   },
@@ -261,7 +251,6 @@ const slides: Slide[] = [
     title: 'The Legacy Site',
     image: '/talks/atlseccon2026/slides/slide5-legacy-site.png',
     imageAlt: 'Legacy Product Passport website screenshot',
-    // Image fills most of slide below title; slight crop on bottom
     imageStyle: { top: 105, left: 240, width: 800, height: 530 },
   },
 
@@ -270,7 +259,6 @@ const slides: Slide[] = [
     id: 6,
     type: 'content-box',
     title: 'A New Portal, A New Problem',
-    // Blue-bordered box at top with the domain mapping
     boxContent: [
       'Legacy site    →    www.productpassport.ca      (old domain, still in use)',
       'New portal    →    shop.appcheckwizard.com    (built on the Cloud / AWS)',
@@ -338,7 +326,7 @@ const slides: Slide[] = [
         { text: '✅ Yes — stale deployment artifact' },
         { text: '\b' },
         { label: 'Safe to delete?', bold: true },
-        { text: '❓...never checked.', color: '#941100' },
+        { text: '❓...never checked.', color: COLORS.red },
         { text: '\b' },
         { text: 'The script had ' },
         { inline: [{ text: 'no context', bold: true, underline: true }, { text: ' beyond what it could see in S3.' }] },
@@ -369,7 +357,7 @@ const slides: Slide[] = [
       {
         parts: [
           { text: '- Unknown\t\t' },
-          { text: 'www.productpassport.ca', color: '#0000FF' },
+          { text: 'www.productpassport.ca', color: COLORS.link },
           { text: ' begins serving attacker content' },
         ],
       },
@@ -407,7 +395,7 @@ const slides: Slide[] = [
     attribution: 'Picture: "Sumatran tiger walking in the Tierpark, Berlin", Captain Herbert, CC BY-SA 3.0, via Wikimedia Commons',
     attributionLink: 'https://commons.wikimedia.org/wiki/File:Sumatran_Tiger_Berlin_Tierpark.jpg',
     warning: 'Warning: Do not try this at home!',
-    warningStyle: { bottom: 1, left: 215, color: '#CC0000', fontSize: 52, fontWeight: 'bold', textDecoration: 'underline' },
+    warningStyle: { bottom: 1, left: 215, color: COLORS.redBright, fontSize: 52, fontWeight: 'bold', textDecoration: 'underline' },
   },
 
   // ─── SLIDE 14: The Attack ─────────────────────────────────────────────────────
@@ -478,7 +466,7 @@ const slides: Slide[] = [
         { text: '→ Visible to every visitor' },
         { text: '→ Domain reputation weaponized against filters and firewalls' },
         { text: '\b' },
-        { text: "The attacker didn't breach anything. They filled a vacancy.", bold: false },
+        { text: "The attacker didn't breach anything. They filled a vacancy." },
       ],
     },
     rightBox: {
@@ -520,15 +508,9 @@ const slides: Slide[] = [
     paragraphs: [
       { text: 'The S3 static website mechanic:' },
       { text: '\b' },
+      { parts: [{ text: 'www.productpassport.ca' }] },
       {
-        parts: [
-          { text: 'www.productpassport.ca' },
-        ],
-      },
-      {
-        parts: [
-          { text: '└─ CNAME ──► www.productpassport.ca.s3-website-us-east-1.amazonaws.com' },
-        ],
+        parts: [{ text: '└─ CNAME ──► www.productpassport.ca.s3-website-us-east-1.amazonaws.com' }],
         indent: 20,
       },
       { text: '\b' },
@@ -584,7 +566,7 @@ const slides: Slide[] = [
         {
           parts: [
             { text: '❌  No uptime monitoring for ' },
-            { text: 'www.productpassport.ca', color: '#0000FF' },
+            { text: 'www.productpassport.ca', color: COLORS.link },
           ],
         },
         { text: '❌  Testing! No anomaly detection on subdomain content' },
@@ -735,8 +717,8 @@ const slides: Slide[] = [
     sideNote: {
       brace: true,
       lines: [
-        { parts: [{ text: '– ' }, { text: 'Explicit Deny', bold: true, color: '#941100' }, { text: ' on s3:DeleteBucket.' }] },
-        { parts: [{ text: '– ' }, { text: 'Terraform', bold: true }, { text: ': lifecycle { ' }, { text: 'prevent_destroy = true', bold: true, color: '#941100' }, { text: ' }' }] },
+        { parts: [{ text: '– ' }, { text: 'Explicit Deny', bold: true, color: COLORS.red }, { text: ' on s3:DeleteBucket.' }] },
+        { parts: [{ text: '– ' }, { text: 'Terraform', bold: true }, { text: ': lifecycle { ' }, { text: 'prevent_destroy = true', bold: true, color: COLORS.red }, { text: ' }' }] },
       ],
     },
   },
@@ -785,8 +767,8 @@ const slides: Slide[] = [
     name: 'Alexander Scheibler (he/him)',
     bullets: ['From New Brunswick', 'Senior Software Developer'],
     links: [
-      { text: 'appcheckwizard.com', href: 'https://appcheckwizard.com', color: '#0000FF' },
-      { text: 'admin@appcheckwizard.com', href: 'mailto:admin@appcheckwizard.com', color: '#0000FF' },
+      { text: 'appcheckwizard.com', href: 'https://appcheckwizard.com', color: COLORS.link },
+      { text: 'admin@appcheckwizard.com', href: 'mailto:admin@appcheckwizard.com', color: COLORS.link },
     ],
     card: '/talks/atlseccon2026/slides/slide32-qrcard.png',
     cardAlt: 'Alexander S, CTFL – Senior Software Developer LinkedIn QR card',
