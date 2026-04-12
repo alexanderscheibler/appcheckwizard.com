@@ -12,6 +12,10 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        josefin: ["var(--font-josefin)", "sans-serif"],
+        parchment: ["var(--font-parchment)", "Papyrus", "fantasy"],
+      }
     },
   },
   plugins: [],

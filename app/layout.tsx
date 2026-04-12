@@ -1,21 +1,43 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import { Montserrat } from 'next/font/google'
+import { Josefin_Sans } from "next/font/google";
 import "./globals.css";
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 
+const josefin = Josefin_Sans({
+  subsets: ["latin"],
+  variable: "--font-josefin",
+  display: "swap",
+});
+
+const parchment = localFont({
+  src: [
+    { path: './fonts/ParchmentMF.woff2', weight: '400', style: 'normal' }
+  ],
+  variable: '--font-parchment',
+  display: 'block',
+  fallback: ['Papyrus', 'fantasy', 'serif']
+});
+
+const siteURL = process.env.NEXT_PUBLIC_SITE_URL
+  ? `https://${process.env.NEXT_PUBLIC_SITE_URL}`
+  : 'http://localhost:3000';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteURL),
   title: 'AppCheckWizard - Senior Software Developer & QA Tester',
   description: 'Senior Software Developer and QA Tester, expertise in JavaScript, Python and Exploratory Testing for mobile applications.',
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
+                                     children,
+                                   }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${parchment.variable} ${josefin.variable}`}>
     <head>
       <link rel="icon" href="/images/favicon/favicon.ico" sizes="any"/>
       <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png"/>

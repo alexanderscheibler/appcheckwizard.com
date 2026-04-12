@@ -8,6 +8,7 @@ import Contact from '@components/Contact'
 import Footer from '@components/Footer'
 
 import { helpCards as skills } from '@data/HelpCards'
+import Talks from "@components/Talks";
 
 export const metadata: Metadata = {
   title: 'AppCheckWizard - Mobile testing for your app',
@@ -20,6 +21,7 @@ export default function Home() {
         <Header/>
         <Hero/>
         <Help skills={skills}/>
+        <Talks/>
         <Projects/>
         <Contact/>
         <Footer/>
