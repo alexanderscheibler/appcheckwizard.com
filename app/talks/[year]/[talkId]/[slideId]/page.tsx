@@ -37,7 +37,7 @@ export async function generateMetadata(
   let specificImage = talk.imgSrc;
 
   if (slide) {
-    if (slide.title) specificTitle = `${slide.title} | ${talk.event}`;
+    if (slide.title) specificTitle = `${slide.title} | ${talk.title} - ${talk.event}`;
     if ('image' in slide && slide.image) specificImage = slide.image as string;
     else if ('bgImage' in slide && slide.bgImage) specificImage = slide.bgImage as string;
   }
@@ -50,17 +50,17 @@ export async function generateMetadata(
   return {
     metadataBase: new URL(baseUrl),
     title: specificTitle,
-    description: talk.description,
+    description: talk.short_description,
     openGraph: {
       title: specificTitle,
-      description: talk.description,
+      description: talk.short_description,
       url: specificUrl,
       images: [{ url: specificImage }]
     },
     twitter: {
       card: 'summary_large_image',
       title: specificTitle,
-      description: talk.description,
+      description: talk.short_description,
       images: [specificImage]
     },
   };

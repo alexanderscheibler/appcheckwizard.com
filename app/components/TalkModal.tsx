@@ -62,7 +62,7 @@ export default function TalkModal({ talk, isOpen, onClose }: TalkModalProps) {
 
           {/* Description */}
           <p className="text-gray-300 text-sm leading-relaxed mb-6">
-            {talk.description}
+            {talk.long_description}
           </p>
 
           <div className="pb-2">

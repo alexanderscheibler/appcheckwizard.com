@@ -153,9 +153,7 @@ function PresentationCore({ slides, initialSlide, basePath }: { slides: Slide[],
   const containerRef = useRef<HTMLDivElement>(null);
   const scaleRef = useRef<HTMLDivElement>(null);
 
-  // Swipe logic references
   const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
 
   // Initialize browser history state if it's empty so the first popstate works
   useEffect(() => {
@@ -176,20 +174,19 @@ function PresentationCore({ slides, initialSlide, basePath }: { slides: Slide[],
   const prev = useCallback(() => goTo(Math.max(0, current - 1)), [current, goTo]);
   const next = useCallback(() => goTo(Math.min(total - 1, current + 1)), [current, total, goTo]);
 
-  // Touch Swipe Handlers
   const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.changedTouches[0].screenX;
+    touchStartX.current = e.changedTouches[0].clientX;
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    touchEndX.current = e.changedTouches[0].screenX;
-    const swipeThreshold = 50;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
 
-    if (touchStartX.current - touchEndX.current > swipeThreshold) {
-      next(); // Swiped left
-    }
-    if (touchEndX.current - touchStartX.current > swipeThreshold) {
-      prev(); // Swiped right
+    if (Math.abs(diff) < 40) return;
+
+    if (diff > 0) {
+      next();
+    } else {
+      prev();
     }
   };
 
