@@ -36,7 +36,7 @@ export default function Talks() {
                     alt={talk.imgAlt}
                     width={600}
                     height={400}
-                    className="w-full h-48 object-contain object-top group-hover:opacity-80 transition-opacity"
+                    className="w-full h-48 object-fill object-top group-hover:opacity-80 transition-opacity"
                   />
                 </Link>
 
