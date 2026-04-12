@@ -21,7 +21,7 @@ export const talks: Talk[] = [
     event: "AtlSecCon 2026",
     date: "April 2026",
     tags: ["aws", "s3", "subdomain-takeover", "dangling-CNAME"],
-    slidesUrl: "/talks/2026/atlseccon",
+    slidesUrl: "/talks/2026/atlseccon/1",
     imgSrc: "/talks/atlseccon2026/slides/thumb-fortune-tiger.webp",
     imgAlt: "AtlSecCon 2026 – Fortune Tiger talk thumbnail"
   },

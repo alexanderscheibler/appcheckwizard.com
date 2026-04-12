@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { SLIDE_WIDTH, SLIDE_HEIGHT, BULLETS_SVG } from '@data/talks/2026-atlseccon/SlidesData';
+import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react';
+import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import { preload } from 'react-dom';
+import { SLIDE_WIDTH, SLIDE_HEIGHT } from '@data/talks/2026-atlseccon/SlidesData';
+
 import type {
   Slide,
-  InlineTextPart,
-  ParagraphData,
-  ListItem,
   CoverSlide as CoverSlideData,
   VideoSlide as VideoSlideData,
   ChapterSlide as ChapterSlideData,
@@ -19,831 +20,52 @@ import type {
   ToolkitSlide as ToolkitSlideData,
   ContactSlide as ContactSlideData,
   ReferencesSlide as ReferencesSlideData
-} from '../data/talks/2026-atlseccon/SlidesData';
-import CustomImage from "@components/CustomImage";
+} from '@data/talks/2026-atlseccon/SlidesData';
 
-// ─── Primitive renderers ───────────────────────────────────────────────────────
+// Primitives and Icons
+import { Parchment } from "@components/Slides/Primitives/Parchment";
+import { NavIconNext } from "@components/Slides/Primitives/NavIconNext";
+import { NavIconPrev } from "@components/Slides/Primitives/NavIconPrev";
+import { NavIconExitFullscreen } from "@components/Slides/Primitives/NavIconExitFullscreen";
+import { NavIconFullscreen } from "@components/Slides/Primitives/NavIconFullscreen";
 
-function InlineText({ parts }: { parts: InlineTextPart[] }) {
-  return (
-    <>
-      {parts.map((part, i) => (
-        <span
-          key={i}
-          style={{
-            fontWeight: part.bold ? 'bold' : 'inherit',
-            fontStyle: part.italic ? 'italic' : 'inherit',
-            color: part.color || 'inherit',
-            textDecoration: part.underline ? 'underline' : 'inherit',
-            fontFamily: part.monospace ? "'Courier New', monospace" : 'inherit',
-          }}
-        >
-          {part.text}
-        </span>
-      ))}
-    </>
-  );
-}
+// ─── Dynamic Slide Imports ─────────────────────────────────────────────────────
+const CoverSlide = dynamic(() => import('@components/Slides/Renderers/CoverSlide'));
+const VideoSlide = dynamic(() => import('@components/Slides/Renderers/VideoSlide'), {
+  loading: () => <p style={{ color: 'white', textAlign: 'center' }}>Loading Video...</p>
+});
+const ChapterSlide = dynamic(() => import('@components/Slides/Renderers/ChapterSlide'));
+const ContentImageMidSlide = dynamic(() => import('@components/Slides/Renderers/ContentImageMidSlide'));
+const ContentTextSlide = dynamic(() => import('@components/Slides/Renderers/ContentTextSlide'));
+const ContentBoxSlide = dynamic(() => import('@components/Slides/Renderers/ContentBoxSlide'));
+const ImageFullSlide = dynamic(() => import('@components/Slides/Renderers/ImageFullSlide'));
+const ContentTwoColSlide = dynamic(() => import('@components/Slides/Renderers/ContentTwoColSlide'));
+const ContentSplitBoxSlide = dynamic(() => import('@components/Slides/Renderers/ContentSplitBoxSlide'));
+const ToolkitSlide = dynamic(() => import('@components/Slides/Renderers/ToolkitSlide'));
+const ContactSlide = dynamic(() => import('@components/Slides/Renderers/ContactSlide'));
+const ReferencesSlide = dynamic(() => import('@components/Slides/Renderers/ReferencesSlide'));
 
-function Paragraph({ para, style = {} }: { para: ParagraphData; style?: React.CSSProperties }) {
-  if (para.text === '\b' || para.text === '') {
-    return <p style={{ margin: 0, lineHeight: 'inherit', ...style }}>&nbsp;</p>;
-  }
-
-  const base: React.CSSProperties = {
-    margin: 0,
-    paddingLeft: para.indent || 0,
-    fontStyle: para.italic ? 'italic' : undefined,
-    fontWeight: para.bold ? 'bold' : undefined,
-    color: para.color || undefined,
-    textAlign: para.align || 'left',
-    fontFamily: para.monospace ? "'Courier New', monospace" : 'var(--font-body)',
-    whiteSpace: 'pre-wrap',
-    ...style,
-  };
-
-  return (
-    <p style={base}>
-      {para.bullet && (
-        <span
-          dangerouslySetInnerHTML={{ __html: BULLETS_SVG }}
-          style={{ display: 'inline-flex', marginTop: 6 }}
-        />
-      )}
-      <span style={{ marginLeft: 10 }}>
-        {para.parts ? <InlineText parts={para.parts} /> : para.text}
-      </span>
-    </p>
-  );
-}
-
-// ─── Shared slide primitives ───────────────────────────────────────────────────
-const NavIconPrev = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="15 18 9 12 15 6" />
-  </svg>
-);
-
-const NavIconNext = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="9 18 15 12 9 6" />
-  </svg>
-);
-
-const NavIconFullscreen = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-  </svg>
-);
-
-const NavIconExitFullscreen = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
-  </svg>
-);
-
-function Parchment({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
-  return (
-    <div style={{ position: 'absolute', inset: 0, background: '#e8d9b0', ...style }}>
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: `
-                    radial-gradient(ellipse at 15% 15%, rgba(210,185,130,0.55) 0%, transparent 55%),
-                    radial-gradient(ellipse at 85% 10%, rgba(195,168,108,0.45) 0%, transparent 50%),
-                    radial-gradient(ellipse at 10% 85%, rgba(200,172,112,0.50) 0%, transparent 52%),
-                    radial-gradient(ellipse at 88% 88%, rgba(215,188,125,0.55) 0%, transparent 50%),
-                    radial-gradient(ellipse at 50% 50%, rgba(240,225,180,0.30) 0%, transparent 65%),
-                    linear-gradient(168deg, #dcc998 0%, #e5d4a8 20%, #eddcb2 42%, #e8d6a8 65%, #ddc898 85%, #d4be8e 100%)
-                `,
-      }} />
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        boxShadow: 'inset 0 0 60px rgba(90,55,10,0.28), inset 0 0 120px rgba(70,38,5,0.14)',
-      }} />
-      <svg style={{ position: 'absolute', width: 0, height: 0 }} aria-hidden="true">
-        <defs>
-          <filter id="parchment-noise" x="0%" y="0%" width="100%" height="100%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.68 0.72" numOctaves={4} seed="3" result="noise" />
-            <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise" />
-            <feBlend in="SourceGraphic" in2="grayNoise" mode="multiply" result="blended" />
-            <feComponentTransfer in="blended">
-              <feFuncA type="linear" slope={1} />
-            </feComponentTransfer>
-          </filter>
-        </defs>
-      </svg>
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        opacity: 0.18,
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
-        backgroundRepeat: 'repeat',
-        backgroundSize: '300px 300px',
-        mixBlendMode: 'multiply',
-      }} />
-      <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function Ornament({ style = {} }: { style?: React.CSSProperties }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'center', ...style }}>
-      <svg width="200" height="20" viewBox="0 0 200 20" xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M10,10 C30,2 50,18 70,10 C90,2 100,14 100,10 C100,6 110,18 130,10 C150,2 170,18 190,10"
-          stroke="#5C3317" strokeWidth="2.5" fill="none" strokeLinecap="round"
-        />
-        <circle cx="100" cy="10" r="3" fill="#5C3317" />
-      </svg>
-    </div>
-  );
-}
-
-function SlideTitle({ text, style = {} }: { text: string; style?: React.CSSProperties }) {
-  const textAlign = style.textAlign || 'center';
-  return (
-    <h1
-      data-slide-display
-      style={{
-        position: 'absolute',
-        top: 30,
-        left: 76,
-        width: 1128,
-        margin: 0,
-        textAlign,
-        fontFamily: 'var(--font-display)',
-        fontWeight: 400,
-        fontSize: 68,
-        color: '#3D2314',
-        lineHeight: 1.1,
-        letterSpacing: '0.01em',
-        ...style,
-      }}
-    >
-      {text}
-    </h1>
-  );
-}
-
-function BorderBox({
-                     style = {},
-                     children,
-                     color = '#1a5276',
-                   }: {
-  style?: React.CSSProperties;
-  children: React.ReactNode;
-  color?: string;
-}) {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        border: `3px solid ${color}`,
-        boxSizing: 'border-box',
-        padding: '10px 16px',
-        background: 'rgba(255,255,255,0.12)',
-        ...style,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-// ─── Slide-type renderers ──────────────────────────────────────────────────────
-function CoverSlide({ slide }: { slide: CoverSlideData }) {
-  return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-      <CustomImage style={{ objectFit: 'contain', objectPosition: 'center'  }}
-        src={slide.bgImage}
-        alt="Cover Background"
-        fill
-        sizes="(max-width: 768px) 100vw, 1280px"
-        unoptimized={true}
-        preload={true}
-      ></CustomImage>
-      <div style={{ position: 'absolute', left: slide.titleStyle.left, top: slide.titleStyle.top, width: slide.titleStyle.width }}>
-        <h1
-          data-slide-display
-          style={{
-            margin: 0,
-            fontFamily: 'var(--font-display)',
-            fontWeight: 400,
-            fontSize: slide.titleStyle.fontSize || 60,
-            color: slide.titleStyle.color,
-            textShadow: slide.titleStyle.textShadow,
-            lineHeight: slide.titleStyle.lineHeight,
-          }}
-        >
-          {slide.title}
-        </h1>
-      </div>
-    </div>
-  );
-}
-
-function VideoSlide({ slide }: { slide: VideoSlideData }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  // Kill the video download when the slide unmounts
-  useEffect(() => {
-    const video = videoRef.current;
-
-    return () => {
-      // Cleanup function that runs when leaving the slide
-      if (video) {
-        video.pause();
-        video.removeAttribute('src'); // Clear out any direct src
-        video.load(); // Force the browser to abort the network request
-      }
-    };
-  }, []);
-
-  return (
-    <Parchment>
-      {slide.title && <SlideTitle text={slide.title} style={{ top: 30 }} />}
-      <div
-        style={{
-          position: 'absolute',
-          top: slide.title ? 118 : 32,
-          left: 40,
-          right: 40,
-          bottom: 32,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'rgba(0,0,0,0.06)',
-          borderRadius: 4,
-          border: '1px solid rgba(92,51,23,0.15)',
-        }}
-      >
-        {slide.videoSrc ? (
-          <video
-            ref={videoRef}
-            controls
-            preload="none"
-            style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: 2 }}
-            poster={slide.poster || undefined}
-          >
-            <source src={slide.videoSrc} type="video/mp4" />
-            <source src={slide.videoSrc.replace('.mp4', '.mov')} type="video/quicktime" />
-            Your browser does not support video playback.
-          </video>
-        ) : (
-          <div style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: 36,
-            color: '#5C3317',
-            opacity: 0.6,
-            letterSpacing: 2
-          }}>
-            [Video]
-          </div>
-        )}
-      </div>
-    </Parchment>
-  );
-}
-
-function ChapterSlide({ slide }: { slide: ChapterSlideData }) {
-  const fs = slide.titleSize || 60;
-  return (
-    <Parchment>
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
-          padding: '40px 100px',
-        }}
-      >
-        <h1
-          data-slide-display
-          style={{
-            margin: 0,
-            fontFamily: 'var(--font-display)',
-            fontWeight: 400,
-            fontSize: fs,
-            color: '#3D2314',
-            lineHeight: 1.2,
-            letterSpacing: '0.01em',
-            ...(slide.titleStyle || {}),
-          }}
-        >
-          {slide.title}
-        </h1>
-        {slide.hasOrnament && <Ornament style={{ marginTop: 22, marginBottom: slide.subtitle ? 22 : 0 }} />}
-        {slide.subtitle && (
-          <h2
-            style={{
-              margin: 0,
-              fontFamily: 'var(--font-display)',
-              fontWeight: 400,
-              fontSize: Math.round(fs * 0.85),
-              color: '#3D2314',
-              lineHeight: 1.25,
-              letterSpacing: '0.02em',
-            }}
-          >
-            {slide.subtitle}
-          </h2>
-        )}
-      </div>
-    </Parchment>
-  );
-}
-
-function ContentImageMidSlide({ slide }: { slide: ContentImageSlideData }) {
-  const imgStyle = slide.imageStyle || { top: 155, left: 90, width: 1100, height: 510 };
-
-  const topVal = Number(imgStyle.top || 155);
-  const heightVal = Number(imgStyle.height || 510);
-  const captionTop = topVal + heightVal + 4;
-
-  return (
-    <Parchment>
-      {slide.title && <SlideTitle text={slide.title} />}
-      <div style={{ position: 'absolute', ...imgStyle, overflow: 'hidden' }}>
-        <CustomImage
-          src={slide.image}
-          alt={slide.imageAlt || 'Slide image'}
-          fill
-          unoptimized={true}
-          preload={true}
-          sizes="(max-width: 768px) 100vw, 1280px"
-          style={{ objectFit: 'contain', objectPosition: 'top center' }}
-        />
-      </div>
-
-      {slide.imageCaption && (
-        <p style={{
-          position: 'absolute',
-          top: captionTop,
-          left: imgStyle.left,
-          width: imgStyle.width,
-          textAlign: 'center',
-          fontFamily: 'var(--font-body)',
-          fontSize: 20,
-          fontStyle: 'italic',
-          color: '#5C3317',
-          margin: 0,
-        }}>
-          {slide.imageCaption}
-        </p>
-      )}
-      {slide.bullets && (
-        <ul style={{
-          position: 'absolute',
-          top: slide.bulletsStyle?.top || 500,
-          left: slide.bulletsStyle?.left || 128,
-          right: 40,
-          margin: 0,
-          padding: 0,
-          listStyle: 'none',
-          fontFamily: 'var(--font-body)',
-          fontSize: 28,
-          color: '#3D2314',
-          lineHeight: 1.45,
-        }}>
-          {slide.bullets.map((b: string, i: number) => (
-            <li key={i} style={{ marginBottom: 6 }}>· {b}</li>
-          ))}
-        </ul>
-      )}
-    </Parchment>
-  );
-}
-
-function ContentTextSlide({ slide }: { slide: ContentTextSlideData }) {
-  const bStyle = slide.bodyStyle || { top: 155, left: 76, width: 1155 };
-  const fs = slide.fontSize || 28;
-  return (
-    <Parchment>
-      {slide.title && <SlideTitle text={slide.title} style={{ top: 30, ...(slide.titleStyle || {}) }} />}
-      <div
-        style={{
-          position: 'absolute',
-          top: bStyle.top,
-          left: bStyle.left,
-          width: bStyle.width,
-          fontFamily: 'var(--font-body)',
-          fontSize: fs,
-          color: '#3D2314',
-          lineHeight: 1.55,
-          textAlign: bStyle.textAlign || 'left',
-        }}
-      >
-        {slide.paragraphs.map((para: ParagraphData, i: number) => (
-          <Paragraph
-            key={i}
-            para={{
-              ...para,
-              align: para.align || (bStyle.textAlign as 'left' | 'center' | 'right' | 'justify' | undefined)
-            }}
-          />
-        ))}
-      </div>
-    </Parchment>
-  );
-}
-
-function ContentBoxSlide({ slide }: { slide: ContentBoxSlideData }) {
-  return (
-    <Parchment>
-      {slide.title && <SlideTitle text={slide.title} />}
-      {slide.intro && (
-        <p style={{
-          position: 'absolute',
-          top: slide.introStyle?.top || 149,
-          left: slide.introStyle?.left || 112,
-          width: slide.introStyle?.width || 1114,
-          margin: 0,
-          fontFamily: 'var(--font-body)',
-          fontSize: 28,
-          color: '#3D2314',
-          lineHeight: 1.5,
-        }}>
-          {slide.intro}
-        </p>
-      )}
-      <BorderBox style={slide.boxStyle}>
-        {slide.boxContent.map((line: string, i: number) => (
-          <p key={i} style={{
-            margin: '0.7em 0',
-            paddingLeft: '2em',
-            fontFamily: 'var(--font-body)',
-            fontSize: 24,
-            color: '#3D2314',
-            whiteSpace: 'pre-wrap',
-          }}>
-            {line}
-          </p>
-        ))}
-      </BorderBox>
-      {slide.bodyLines && (
-        <div style={{
-          position: 'absolute',
-          top: (Number(slide.boxStyle.top) + Number(slide.boxStyle.height) + 20),
-          left: slide.bodyStyle?.left || 117,
-          width: slide.bodyStyle?.width || 1054,
-          fontFamily: 'var(--font-body)',
-          fontSize: 28,
-          color: '#3D2314',
-          lineHeight: 1.55,
-        }}>
-          {slide.bodyLines.map((line: ParagraphData, i: number) =>
-            line.text === '' || line.text === '\b'
-              ? <p key={i} style={{ margin: 0 }}>&nbsp;</p>
-              : <p key={i} style={{
-                margin: '2px 0',
-                fontWeight: line.bold ? 'bold' : 'normal',
-                fontStyle: line.italic ? 'italic' : 'normal',
-                textAlign: line.align || 'left',
-              }}>
-                {line.text}
-              </p>
-          )}
-        </div>
-      )}
-    </Parchment>
-  );
-}
-
-function ImageFullSlide({ slide }: { slide: ImageFullSlideData }) {
-  return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: '#000' }}>
-      <CustomImage
-        src={slide.image}
-        alt={slide.imageAlt}
-        fill
-        unoptimized={true}
-        preload={true}
-        sizes="100vw"
-        style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
-      />
-      <div style={{
-        position: 'absolute',
-        top: 8,
-        left: 67,
-        right: 67,
-        fontFamily: 'var(--font-body)',
-        fontSize: 18,
-        color: '#000',
-        lineHeight: 1.3,
-        background: 'rgba(255,255,255,0.7)',
-        padding: '2px 6px',
-      }}>
-        {slide.attribution}{' '}
-        <a href={slide.attributionLink} style={{ color: '#0000EE' }} target="_blank" rel="noreferrer">
-          {slide.attributionLink}
-        </a>
-      </div>
-      {slide.warning && (
-        <div style={{
-          position: 'absolute',
-          bottom: slide.warningStyle?.bottom || 30,
-          left: slide.warningStyle?.left || 315,
-          right: 40,
-          fontFamily: 'var(--font-body)',
-          fontSize: slide.warningStyle?.fontSize || 52,
-          fontWeight: slide.warningStyle?.fontWeight || 'bold',
-          color: slide.warningStyle?.color || '#CC0000',
-          textDecoration: slide.warningStyle?.textDecoration,
-          textShadow: '1px 1px 3px rgba(0,0,0,0.5)',
-          lineHeight: 1.1,
-        }}>
-          {slide.warning}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function ContentTwoColSlide({ slide }: { slide: ContentTwoColSlideData }) {
-  const l = slide.leftContent;
-  const r = slide.rightContent;
-  const bodyFs = 26;
-  return (
-    <Parchment>
-      {slide.title && <SlideTitle text={slide.title} />}
-      <div style={{ position: 'absolute', ...l.imageStyle, overflow: 'hidden' }}>
-        <CustomImage
-          src={l.image}
-          alt={l.imageAlt || 'Left content'}
-          fill
-          sizes="50vw"
-          style={{ objectFit: 'contain', objectPosition: 'top left' }}
-          unoptimized={true}
-          preload={true}
-        />
-      </div>
-      {l.caption && (
-        <p style={{
-          position: 'absolute',
-          top: l.captionStyle?.top,
-          left: l.captionStyle?.left,
-          width: l.captionStyle?.width,
-          textAlign: 'center',
-          margin: 0,
-          fontFamily: 'var(--font-body)',
-          fontSize: 20,
-          fontStyle: 'italic',
-          color: '#5C3317',
-        }}>
-          {l.caption}
-        </p>
-      )}
-      <div style={{
-        position: 'absolute',
-        top: r.style.top,
-        left: r.style.left,
-        width: r.style.width,
-        fontFamily: 'var(--font-body)',
-        fontSize: bodyFs,
-        color: '#3D2314',
-        lineHeight: 1.5,
-      }}>
-        {r.items.map((item: ListItem, i: number) => {
-          if (item.label) return <p key={i} style={{ margin: '0 0 6px', fontWeight: 'bold' }}>{item.label}</p>;
-          if (item.inline) return <p key={i} style={{ margin: '0 0 6px', color: item.color || '#3D2314' }}><InlineText parts={item.inline} /></p>;
-          if (item.text === '\b' || item.text === '') return <p key={i} style={{ margin: 0 }}>&nbsp;</p>;
-          return <p key={i} style={{ margin: '0 0 6px', color: item.color || '#3D2314' }}>{item.text}</p>;
-        })}
-      </div>
-    </Parchment>
-  );
-}
-
-function ContentSplitBoxSlide({ slide }: { slide: ContentSplitBoxSlideData }) {
-  const l = slide.leftContent;
-  const r = slide.rightBox;
-  return (
-    <Parchment>
-      {slide.title && <SlideTitle text={slide.title} />}
-      <div style={{
-        position: 'absolute',
-        top: l.style.top,
-        left: l.style.left,
-        width: l.style.width,
-        fontFamily: 'var(--font-body)',
-        fontSize: 27,
-        color: '#3D2314',
-        lineHeight: 1.55,
-      }}>
-        {l.items.map((item: ListItem, i: number) => {
-          if (item.parts) return <p key={i} style={{ margin: '0 0 6px' }}><InlineText parts={item.parts} /></p>;
-          if (item.text === '') return <p key={i} style={{ margin: 0 }}>&nbsp;</p>;
-          return <p key={i} style={{ margin: '0 0 6px', fontWeight: item.bold ? 'bold' : 'normal' }}>{item.text}</p>;
-        })}
-      </div>
-      <BorderBox style={r.style}>
-        {r.items.map((item: string, i: number) => (
-          <p key={i} style={{
-            margin: '8px 0',
-            fontFamily: 'var(--font-body)',
-            fontSize: 28,
-            color: '#3D2314',
-            fontWeight: r.itemStyle?.fontWeight || 'normal',
-          }}>
-            {item}
-          </p>
-        ))}
-      </BorderBox>
-    </Parchment>
-  );
-}
-
-function ToolkitSlide({ slide }: { slide: ToolkitSlideData }) {
-  return (
-    <Parchment>
-      {slide.title && <SlideTitle text={slide.title} style={{ top: 33 }} />}
-      <div style={{
-        position: 'absolute',
-        top: 130,
-        left: 125,
-        width: 1030,
-        fontFamily: 'var(--font-body)',
-        fontSize: 24,
-        color: '#3D2314',
-        lineHeight: 1.55,
-      }}>
-        {slide.sections.map((section, si: number) => (
-          <div key={si} style={{ marginBottom: 8 }}>
-            <p style={{ margin: '0 0 2px', fontWeight: '600', fontSize: 22, letterSpacing: 1 }}>{section.label}</p>
-            {section.items.map((item: ListItem, ii: number) => {
-              if (item.text) return <p key={ii} style={{ margin: '20px 0' }}>{item.text}</p>;
-              if (item.parts) return <p key={ii} style={{ margin: '20px 0' }}><InlineText parts={item.parts} /></p>;
-              return null;
-            })}
-          </div>
-        ))}
-      </div>
-      {slide.sideNote && (
-        <>
-          <div style={{
-            position: 'absolute',
-            top: 283, left: 530,
-            width: 30, height: 170,
-            fontFamily: 'var(--font-body)',
-            fontSize: 84,
-            color: '#3D2314',
-            lineHeight: 1,
-            display: 'flex',
-            alignItems: 'center',
-          }}>{'{'}</div>
-          <div style={{
-            position: 'absolute',
-            top: 327, left: 555,
-            width: 468,
-            fontFamily: 'var(--font-body)',
-            fontSize: 20,
-            color: '#3D2314',
-            lineHeight: 1.9,
-          }}>
-            {slide.sideNote.lines.map((line, i: number) => (              <p key={i} style={{ margin: '2px 0' }}>
-                <InlineText parts={line.parts} />
-              </p>
-            ))}
-          </div>
-        </>
-      )}
-    </Parchment>
-  );
-}
-
-function ContactSlide({ slide }: { slide: ContactSlideData }) {
-  return (
-    <Parchment>
-      {slide.logo && (
-        <CustomImage
-          src={slide.logo}
-          alt="Logo"
-          width={220}
-          height={220}
-          style={{ position: 'absolute', top: 20, left: 20, objectFit: 'contain' }}
-          unoptimized={true}
-          preload={true}
-        />
-      )}
-      {slide.title && <SlideTitle text={slide.title} style={{ left: 85, top: 71, fontSize: 94 }} />}
-      <div style={{
-        position: 'absolute',
-        top: 233, left: 154, width: 731,
-        fontFamily: 'var(--font-body)',
-        fontSize: 34,
-        color: '#3D2314',
-        lineHeight: 1.5,
-      }}>
-        <p style={{ margin: '0 0 10px' }}>{slide.name}</p>
-        {slide.bullets.map((b: string, i: number) => (
-          <p key={i} style={{ margin: '0 0 4px' }}>· {b}</p>
-        ))}
-      </div>
-      <div style={{
-        position: 'absolute',
-        top: 477, left: 174,
-        fontFamily: 'var(--font-body)',
-        fontSize: 32,
-        lineHeight: 1.6,
-      }}>
-        {slide.links.map((link, i: number) => (
-          <p key={i} style={{ margin: '0 0 4px' }}>
-            <a href={link.href} style={{ color: link.color || '#0000FF', textDecoration: 'underline' }} target="_blank" rel="noreferrer">
-              {link.text}
-            </a>
-          </p>
-        ))}
-      </div>
-      {slide.card && (
-        <CustomImage
-          src={slide.card}
-          alt={slide.cardAlt || 'Contact Card'}
-          width={400}
-          height={400}
-          style={{ position: 'absolute', top: 203, right: 70, objectFit: 'contain' }}
-          unoptimized={true}
-          preload={true}
-        />
-      )}
-    </Parchment>
-  );
-}
-
-function ReferencesSlide({ slide }: { slide: ReferencesSlideData }) {
-  return (
-    <Parchment>
-      {slide.logo && (
-        <CustomImage
-          src={slide.logo}
-          alt="Logo"
-          width={160}
-          height={160}
-          style={{ position: 'absolute', top: 30, right: 30, objectFit: 'contain' }}
-          unoptimized={true}
-          preload={true}
-        />
-      )}
-      {slide.title && <SlideTitle text={slide.title} style={{ top: 63 }} />}
-      <div style={{
-        position: 'absolute',
-        top: 179, left: 76, right: 180,
-        fontFamily: 'var(--font-body)',
-        fontSize: 24,
-        color: '#3D2314',
-        lineHeight: 1.7,
-      }}>
-        {slide.refs.map((ref, i: number) => (
-          <p key={i} style={{ margin: '0 0 14px' }}>
-            {'- '}
-            {ref.parts ? <InlineText parts={ref.parts} /> : ref.text}
-            {ref.href && (
-              <>
-                {' '}
-                <a href={ref.href} style={{ color: '#0000FF', wordBreak: 'break-all' }} target="_blank" rel="noreferrer">
-                  {ref.href}
-                </a>
-              </>
-            )}
-          </p>
-        ))}
-      </div>
-    </Parchment>
-  );
-}
-
-// ─── Slide dispatcher ──────────────────────────────────────────────────────────
-
+// ─── Slide Dispatcher & Wrapper ────────────────────────────────────────────────
 function SlideRenderer({ slide }: { slide: Slide }) {
   switch (slide.type) {
-    case 'cover':             return <CoverSlide slide={slide} />;
-    case 'video':             return <VideoSlide slide={slide} />;
-    case 'chapter':           return <ChapterSlide slide={slide} />;
+    case 'cover':             return <CoverSlide slide={slide as CoverSlideData} />;
+    case 'video':             return <VideoSlide slide={slide as VideoSlideData} />;
+    case 'chapter':           return <ChapterSlide slide={slide as ChapterSlideData} />;
     case 'content-image-top':
-    case 'content-image-mid': return <ContentImageMidSlide slide={slide} />;
-    case 'content-text':      return <ContentTextSlide slide={slide} />;
-    case 'content-box':       return <ContentBoxSlide slide={slide} />;
-    case 'image-full':        return <ImageFullSlide slide={slide} />;
-    case 'content-two-col':   return <ContentTwoColSlide slide={slide} />;
-    case 'content-split-box': return <ContentSplitBoxSlide slide={slide} />;
-    case 'toolkit':           return <ToolkitSlide slide={slide} />;
-    case 'contact':           return <ContactSlide slide={slide} />;
-    case 'references':        return <ReferencesSlide slide={slide} />;
+    case 'content-image-mid': return <ContentImageMidSlide slide={slide as ContentImageSlideData} />;
+    case 'content-text':      return <ContentTextSlide slide={slide as ContentTextSlideData} />;
+    case 'content-box':       return <ContentBoxSlide slide={slide as ContentBoxSlideData} />;
+    case 'image-full':        return <ImageFullSlide slide={slide as ImageFullSlideData} />;
+    case 'content-two-col':   return <ContentTwoColSlide slide={slide as ContentTwoColSlideData} />;
+    case 'content-split-box': return <ContentSplitBoxSlide slide={slide as ContentSplitBoxSlideData} />;
+    case 'toolkit':           return <ToolkitSlide slide={slide as ToolkitSlideData} />;
+    case 'contact':           return <ContactSlide slide={slide as ContactSlideData} />;
+    case 'references':        return <ReferencesSlide slide={slide as ReferencesSlideData} />;
     default:
       return (
         <Parchment>
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <p style={{ fontFamily: 'sans-serif', color: '#666' }}>
-              Slide {(slide as Slide).id || 'Unknown'}
-            </p>
+            <p style={{ fontFamily: 'sans-serif', color: '#666' }}>Slide {(slide as Slide).id}</p>
           </div>
         </Parchment>
       );
@@ -865,30 +87,99 @@ function SlideWrapper({ slide, direction }: { slide: Slide; direction: string })
   );
 }
 
-// ─── Presentation shell ────────────────────────────────────────────────────────
+// ─── Navigation Bar ──────────────────────────────────────────────────
+function PresentationControls({
+                                current, total, isFullscreen, onPrev, onNext, onGoTo, onToggleFullscreen
+                              }: {
+  current: number, total: number, isFullscreen: boolean,
+  onPrev: () => void, onNext: () => void, onGoTo: (i: number) => void, onToggleFullscreen: () => void
+}) {
+  const btnStyle = (disabled: boolean): React.CSSProperties => ({
+    background: 'rgba(255,255,255,0.12)',
+    border: '1px solid rgba(255,255,255,0.2)',
+    color: disabled ? 'rgba(255,255,255,0.25)' : '#fff',
+    borderRadius: 8,
+    padding: '6px 14px',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    fontSize: 16,
+    transition: 'background 0.15s',
+  });
 
-export interface PresentationProps {
-  /** The ordered array of slides to display. Pass `slides` from any SlidesData file. */
-  slides: Slide[];
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 16, marginTop: 14,
+      padding: '8px 20px', background: 'rgba(255,255,255,0.08)',
+      borderRadius: 40, backdropFilter: 'blur(4px)', flexShrink: 0,
+    }}>
+      <button onClick={onPrev} disabled={current === 0} style={btnStyle(current === 0)} aria-label="Previous slide">
+        <NavIconPrev />
+      </button>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ color: '#ccc', fontFamily: 'monospace', fontSize: 14, minWidth: 70, textAlign: 'center' }}>
+          {current + 1} / {total}
+        </span>
+        <input
+          type="range" min={0} max={total - 1} value={current}
+          onChange={(e) => onGoTo(Number(e.target.value))}
+          style={{ width: 160, accentColor: '#c9a96e', cursor: 'pointer' }}
+          aria-label="Slide scrubber"
+        />
+      </div>
+
+      <button onClick={onNext} disabled={current === total - 1} style={btnStyle(current === total - 1)} aria-label="Next slide">
+        <NavIconNext />
+      </button>
+
+      <button onClick={onToggleFullscreen} style={btnStyle(false)} aria-label="Toggle fullscreen">
+        {isFullscreen ? <NavIconExitFullscreen /> : <NavIconFullscreen />}
+      </button>
+    </div>
+  );
 }
 
-export default function Presentation({ slides }: PresentationProps) {
-  const [current, setCurrent] = useState(0);
+// ─── Main Presentation Core ────────────────────────────────────────────────────
+function PresentationCore({ slides, initialSlide, basePath }: { slides: Slide[], initialSlide: number, basePath: string }) {
+  const router = useRouter();
+  const total = slides.length;
+
+  const [current, setCurrent] = useState(initialSlide);
   const [direction, setDirection] = useState('Right');
   const [isFullscreen, setIsFullscreen] = useState(false);
-
   const containerRef = useRef<HTMLDivElement>(null);
   const scaleRef = useRef<HTMLDivElement>(null);
-  const total = slides.length;
 
   const goTo = useCallback((index: number) => {
     if (index === current) return;
     setDirection(index > current ? 'Right' : 'Left');
     setCurrent(index);
-  }, [current]);
+    router.push(`${basePath}/${index + 1}`, { scroll: false });
+  }, [current, router, basePath]);
 
   const prev = useCallback(() => goTo(Math.max(0, current - 1)), [current, goTo]);
   const next = useCallback(() => goTo(Math.min(total - 1, current + 1)), [current, total, goTo]);
+
+  useEffect(() => {
+    const nextSlides = slides.slice(current + 1, current + 3);
+    nextSlides.forEach((s) => {
+      if ('bgImage' in s && s.bgImage) preload(s.bgImage, { as: 'image' });
+      if ('image' in s && s.image) preload(s.image, { as: 'image' });
+    });
+  }, [current, slides]);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen().catch((err) => console.warn(err.message));
+    } else {
+      document.exitFullscreen().catch((err) => console.warn(err.message));
+    }
+  };
+
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -907,6 +198,7 @@ export default function Presentation({ slides }: PresentationProps) {
       const containerH = containerRef.current.clientHeight;
       const availH = containerH - 80;
       const scale = Math.min(containerW / SLIDE_WIDTH, availH / SLIDE_HEIGHT, 1);
+
       scaleRef.current.style.transform = `scale(${scale})`;
       if (scaleRef.current.parentElement) {
         scaleRef.current.parentElement.style.width = `${SLIDE_WIDTH * scale}px`;
@@ -920,42 +212,15 @@ export default function Presentation({ slides }: PresentationProps) {
     return () => ro.disconnect();
   }, []);
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen().catch((err) => {
-        console.warn(`Could not enable fullscreen: ${err.message}`);
-      });
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen().catch((err) => {
-        console.warn(`Could not exit fullscreen: ${err.message}`);
-      });
-      setIsFullscreen(false);
-    }
-  };
-
-  useEffect(() => {
-    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
-    document.addEventListener('fullscreenchange', onChange);
-    return () => document.removeEventListener('fullscreenchange', onChange);
-  }, []);
-
   const slide = slides[current];
 
   return (
     <div
       ref={containerRef}
       style={{
-        width: '100%',
-        height: '100%',
-        minHeight: '100vh',
-        background: '#1a1a1a',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        userSelect: 'none',
-        gap: 0,
+        width: '100%', height: '100%', minHeight: '100vh',
+        background: '#1a1a1a', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', userSelect: 'none', gap: 0,
       }}
     >
       <div style={{ position: 'relative', flexShrink: 0 }}>
@@ -963,71 +228,25 @@ export default function Presentation({ slides }: PresentationProps) {
           <div
             ref={scaleRef}
             style={{
-              width: SLIDE_WIDTH,
-              height: SLIDE_HEIGHT,
-              transformOrigin: 'top left',
-              position: 'relative',
-              overflow: 'hidden',
-              boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
+              width: SLIDE_WIDTH, height: SLIDE_HEIGHT,
+              transformOrigin: 'top left', position: 'relative',
+              overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
             }}
           >
             <SlideWrapper key={slide.id} slide={slide} direction={direction} />
-
-            {/* Hidden Preload Buffer */}
-            {/* Preload Buffer: Renders the next 2 slides invisibly to force network fetch */}
-            {/* Filter out videos from the preload */ }
-            <div style={{ display: 'none' }} aria-hidden="true">
-              {slides
-                .slice(current + 1, current + 3)
-                .filter((s) => s.type !== 'video')
-                .map((s) => (
-                  <SlideRenderer key={`preload-${s.id}`} slide={s} />
-                ))}
-            </div>
           </div>
         </div>
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 16,
-          marginTop: 14,
-          padding: '8px 20px',
-          background: 'rgba(255,255,255,0.08)',
-          borderRadius: 40,
-          backdropFilter: 'blur(4px)',
-          flexShrink: 0,
-        }}
-      >
-        <button onClick={prev} disabled={current === 0} style={btnStyle(current === 0)} aria-label="Previous slide">
-          <NavIconPrev />
-        </button>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ color: '#ccc', fontFamily: 'monospace', fontSize: 14, minWidth: 70, textAlign: 'center' }}>
-            {current + 1} / {total}
-          </span>
-          <input
-            type="range"
-            min={0}
-            max={total - 1}
-            value={current}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => goTo(Number(e.target.value))}
-            style={{ width: 160, accentColor: '#c9a96e', cursor: 'pointer' }}
-            aria-label="Slide scrubber"
-          />
-        </div>
-
-        <button onClick={next} disabled={current === total - 1} style={btnStyle(current === total - 1)} aria-label="Next slide">
-          <NavIconNext />
-        </button>
-
-        <button onClick={toggleFullscreen} style={btnStyle(false)} aria-label="Toggle fullscreen">
-          {isFullscreen ? <NavIconExitFullscreen /> : <NavIconFullscreen />}
-        </button>
-      </div>
+      <PresentationControls
+        current={current}
+        total={total}
+        isFullscreen={isFullscreen}
+        onPrev={prev}
+        onNext={next}
+        onGoTo={goTo}
+        onToggleFullscreen={toggleFullscreen}
+      />
 
       <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, marginTop: 6, fontFamily: 'monospace', flexShrink: 0 }}>
         ← → arrow keys to navigate · F for fullscreen
@@ -1038,10 +257,8 @@ export default function Presentation({ slides }: PresentationProps) {
           --font-display: 'ParchmentMF', 'Papyrus', fantasy;
           --font-body: var(--font-josefin), 'Gill Sans', sans-serif;
         }
-
         * { box-sizing: border-box; }
         p { margin: 0; }
-
         @keyframes slideInRight {
           from { transform: translateX(60px); opacity: 0; }
           to   { transform: translateX(0);    opacity: 1; }
@@ -1055,15 +272,15 @@ export default function Presentation({ slides }: PresentationProps) {
   );
 }
 
-function btnStyle(disabled: boolean): React.CSSProperties {
-  return {
-    background: 'rgba(255,255,255,0.12)',
-    border: '1px solid rgba(255,255,255,0.2)',
-    color: disabled ? 'rgba(255,255,255,0.25)' : '#fff',
-    borderRadius: 8,
-    padding: '6px 14px',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    fontSize: 16,
-    transition: 'background 0.15s',
-  };
+// ─── Default Export ────────────────────────────────────────────────────────────
+export default function Presentation({ slides, initialSlide = 0, basePath }: { slides: Slide[], initialSlide?: number, basePath: string }) {
+  return (
+    <Suspense fallback={
+      <div style={{ width: '100%', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1a1a1a', color: 'white' }}>
+        Loading Presentation...
+      </div>
+    }>
+      <PresentationCore slides={slides} initialSlide={initialSlide} basePath={basePath} />
+    </Suspense>
+  );
 }
