@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react';
-import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { preload } from 'react-dom';
 import { SLIDE_WIDTH, SLIDE_HEIGHT } from '@data/talks/2026-atlseccon/SlidesData';
@@ -82,7 +81,13 @@ function SlideWrapper({ slide, direction }: { slide: Slide; direction: string })
         animation: `slideIn${direction} 0.35s cubic-bezier(0.4, 0, 0.2, 1) both`,
       }}
     >
-      <SlideRenderer slide={slide} />
+      <Suspense fallback={
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e8d9b0' }}>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 24, color: 'rgba(92,51,23,0.5)' }}>Loading...</p>
+        </div>
+      }>
+        <SlideRenderer slide={slide} />
+      </Suspense>
     </div>
   );
 }
@@ -140,7 +145,6 @@ function PresentationControls({
 
 // ─── Main Presentation Core ────────────────────────────────────────────────────
 function PresentationCore({ slides, initialSlide, basePath }: { slides: Slide[], initialSlide: number, basePath: string }) {
-  const router = useRouter();
   const total = slides.length;
 
   const [current, setCurrent] = useState(initialSlide);
@@ -149,15 +153,49 @@ function PresentationCore({ slides, initialSlide, basePath }: { slides: Slide[],
   const containerRef = useRef<HTMLDivElement>(null);
   const scaleRef = useRef<HTMLDivElement>(null);
 
+  // Initialize browser history state if it's empty so the first popstate works
+  useEffect(() => {
+    if (!window.history.state) {
+      window.history.replaceState({ slideIndex: initialSlide }, '', `${basePath}/${initialSlide + 1}`);
+    }
+  }, [initialSlide, basePath]);
+
   const goTo = useCallback((index: number) => {
     if (index === current) return;
     setDirection(index > current ? 'Right' : 'Left');
     setCurrent(index);
-    router.push(`${basePath}/${index + 1}`, { scroll: false });
-  }, [current, router, basePath]);
+
+    // We pass the index into the state object so we can read it when the user clicks 'Back'
+    window.history.pushState({ slideIndex: index }, '', `${basePath}/${index + 1}`);
+  }, [current, basePath]);
 
   const prev = useCallback(() => goTo(Math.max(0, current - 1)), [current, goTo]);
   const next = useCallback(() => goTo(Math.min(total - 1, current + 1)), [current, total, goTo]);
+
+  // Listen for the Browser Back/Forward buttons
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      let newIndex = 0;
+
+      // If we have our explicitly pushed state, use it
+      if (event.state && typeof event.state.slideIndex === 'number') {
+        newIndex = event.state.slideIndex;
+      } else {
+        // Fallback: parse it from the URL
+        const pathParts = window.location.pathname.split('/');
+        const urlSlide = parseInt(pathParts[pathParts.length - 1], 10);
+        newIndex = isNaN(urlSlide) ? 0 : Math.max(0, Math.min(total - 1, urlSlide - 1));
+      }
+
+      if (newIndex !== current) {
+        setDirection(newIndex > current ? 'Right' : 'Left');
+        setCurrent(newIndex);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [current, total]);
 
   useEffect(() => {
     const nextSlides = slides.slice(current + 1, current + 3);
