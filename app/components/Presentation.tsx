@@ -153,6 +153,10 @@ function PresentationCore({ slides, initialSlide, basePath }: { slides: Slide[],
   const containerRef = useRef<HTMLDivElement>(null);
   const scaleRef = useRef<HTMLDivElement>(null);
 
+  // Swipe logic references
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
   // Initialize browser history state if it's empty so the first popstate works
   useEffect(() => {
     if (!window.history.state) {
@@ -171,6 +175,23 @@ function PresentationCore({ slides, initialSlide, basePath }: { slides: Slide[],
 
   const prev = useCallback(() => goTo(Math.max(0, current - 1)), [current, goTo]);
   const next = useCallback(() => goTo(Math.min(total - 1, current + 1)), [current, total, goTo]);
+
+  // Touch Swipe Handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.changedTouches[0].screenX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    touchEndX.current = e.changedTouches[0].screenX;
+    const swipeThreshold = 50;
+
+    if (touchStartX.current - touchEndX.current > swipeThreshold) {
+      next(); // Swiped left
+    }
+    if (touchEndX.current - touchStartX.current > swipeThreshold) {
+      prev(); // Swiped right
+    }
+  };
 
   // Listen for the Browser Back/Forward buttons
   useEffect(() => {
@@ -255,6 +276,8 @@ function PresentationCore({ slides, initialSlide, basePath }: { slides: Slide[],
   return (
     <div
       ref={containerRef}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       style={{
         width: '100%', height: '100%', minHeight: '100vh',
         background: '#1a1a1a', display: 'flex', flexDirection: 'column',
@@ -287,7 +310,7 @@ function PresentationCore({ slides, initialSlide, basePath }: { slides: Slide[],
       />
 
       <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, marginTop: 6, fontFamily: 'monospace', flexShrink: 0 }}>
-        ← → arrow keys to navigate · F for fullscreen
+        ← → arrow keys or swipe to navigate · F for fullscreen
       </p>
 
       <style>{`

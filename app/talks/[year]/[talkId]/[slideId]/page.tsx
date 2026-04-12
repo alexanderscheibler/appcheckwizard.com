@@ -1,5 +1,5 @@
 // app/talks/[year]/[talkId]/[slideId]/page.tsx
-import type { Metadata, ResolvingMetadata } from 'next';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Presentation from '@components/Presentation';
 import { talks } from '@data/talks/talks';
@@ -12,6 +12,7 @@ async function getSlides(fullTalkId: string) {
   try {
     const module = await import(`@data/talks/${fullTalkId}/SlidesData`);
     return module.default;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return null;
   }
@@ -41,11 +42,27 @@ export async function generateMetadata(
     else if ('bgImage' in slide && slide.bgImage) specificImage = slide.bgImage as string;
   }
 
+  // Next.js needs a base URL to convert relative image paths (like /talks/...)
+  // into absolute URLs (https://appcheckwizard.com/talks/...) for Telegram.
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://appcheckwizard.com';
+  const specificUrl = `/talks/${resolvedParams.year}/${resolvedParams.talkId}/${resolvedParams.slideId}`;
+
   return {
+    metadataBase: new URL(baseUrl),
     title: specificTitle,
     description: talk.description,
-    openGraph: { title: specificTitle, description: talk.description, images: [{ url: specificImage }] },
-    twitter: { card: 'summary_large_image', title: specificTitle, description: talk.description, images: [specificImage] },
+    openGraph: {
+      title: specificTitle,
+      description: talk.description,
+      url: specificUrl,
+      images: [{ url: specificImage }]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: specificTitle,
+      description: talk.description,
+      images: [specificImage]
+    },
   };
 }
 
