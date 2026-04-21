@@ -3,6 +3,7 @@
 import { X } from "lucide-react"
 import CustomImage from "@components/CustomImage";
 import { renderDescription } from "@utils/functions/textUtils";
+import {useEffect} from "react";
 
 interface Project {
   id: string
@@ -20,7 +21,15 @@ interface ModalProps extends Project {
   onClose: () => void
 }
 
-export default function Modal({ isOpen, onClose, title, href, imgSrc, imgAlt, description, long_description, tech }: ModalProps) {
+export default function Modal({ isOpen, onClose, title, href, imgSrc, imgAlt, long_description, tech }: ModalProps) {
+  // Close on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
