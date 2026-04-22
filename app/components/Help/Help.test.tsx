@@ -7,6 +7,7 @@ import {
   mockHelpCardsWithNoData
 } from "@data/mocks/IncorrectCards";
 import { mockValidCards } from "@data/mocks/CorrectCards";
+import Talks from "@components/Talks";
 
 describe('Help', () => {
   beforeEach(() => {
@@ -84,14 +85,14 @@ describe('Help', () => {
   it('renders a card with no title', () => {
     render(<Help skills={mockHelpCardWithNoTitle} />)
     const cards = screen.getAllByRole('article')
-    expect(cards).toHaveLength(mockHelpCardWithNoTitle.length - 1)
+    expect(cards).toHaveLength(mockHelpCardWithNoTitle.length)
     expect(screen.queryByText('Sample card with no Title.')).toBeInTheDocument()
   })
 
   it('renders a card with no description', () => {
     render(<Help skills={mockHelpCardWithNoDescription} />)
     const cards = screen.getAllByRole('article')
-    expect(cards).toHaveLength(mockHelpCardWithNoDescription.length - 1)
+    expect(cards).toHaveLength(mockHelpCardWithNoDescription.length)
     expect(screen.queryByText('This card has no description.')).toBeInTheDocument()
   })
 
@@ -108,9 +109,9 @@ describe('Help', () => {
   })
 
   it('renders the ChevronDown icon linking to projects', () => {
-    render(<Help skills={mockValidCards} />);
+    render(<Talks />);
 
-    const chevronLink = screen.getByRole('link', { name: /Projects. What have I done/i });
+    const chevronLink = screen.getByRole('link', { name: /What have I worked on\?/i });
     expect(chevronLink).toBeInTheDocument();
     expect(chevronLink).toHaveAttribute('href', '#projects');
   });
