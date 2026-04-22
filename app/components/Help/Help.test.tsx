@@ -81,30 +81,30 @@ describe('Help', () => {
     expect(description).toBeVisible();
   });
 
-  it('does not render a card with no title', () => {
+  it('renders a card with no title', () => {
     render(<Help skills={mockHelpCardWithNoTitle} />)
     const cards = screen.getAllByRole('article')
     expect(cards).toHaveLength(mockHelpCardWithNoTitle.length - 1)
-    expect(screen.queryByText('Sample card with no Title.')).not.toBeInTheDocument()
+    expect(screen.queryByText('Sample card with no Title.')).toBeInTheDocument()
   })
 
-  it('does not render a card with no description', () => {
+  it('renders a card with no description', () => {
     render(<Help skills={mockHelpCardWithNoDescription} />)
     const cards = screen.getAllByRole('article')
     expect(cards).toHaveLength(mockHelpCardWithNoDescription.length - 1)
-    expect(screen.queryByText('This card has no description.')).not.toBeInTheDocument()
+    expect(screen.queryByText('This card has no description.')).toBeInTheDocument()
   })
 
-  it('does not render a card with no data from an array of cards', () => {
+  it('renders a card with no data from an array of cards', () => {
     render(<Help skills={mockHelpCardWithNoData} />)
     const cards = screen.getAllByRole('article')
-    expect(cards).toHaveLength(mockHelpCardWithNoData.length - 1)
+    expect(cards).toHaveLength(mockHelpCardWithNoData.length)
   })
 
-  it('does not render a card with no data if only card', () => {
+  it('renders a card with no data if only card', () => {
     render(<Help skills={mockHelpCardsWithNoData} />)
     const cards = screen.getAllByRole('article')
-    expect(cards).toHaveLength(0)
+    expect(cards).toHaveLength(1)
   })
 
   it('renders the ChevronDown icon linking to projects', () => {
