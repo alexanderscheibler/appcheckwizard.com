@@ -1,6 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  /* Colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Fonts */
+  --font-josefin: var(--font-josefin), sans-serif;
+  --font-parchment: var(--font-parchment), Papyrus, fantasy;
+}
 
 :root {
   --foreground-rgb: 255, 255, 255;
