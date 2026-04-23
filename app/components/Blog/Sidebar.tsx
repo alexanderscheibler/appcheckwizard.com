@@ -17,14 +17,14 @@ export function Sidebar() {
 
   return (
     <>
-      <header className="hidden p-4 py-8 md:flex md:flex-col md:w-[18.2rem] md:fixed md:inset-y-0 bg-gray-100 dark:bg-gray-800" id="top">
+      <header className="hidden p-4 py-8 md:flex md:flex-col md:w-[18.2rem] md:fixed md:inset-y-0 bg-gray-800" id="top">
         <div className="mb-6 md:space-y-6">
           <h2 className="text-2xl font-bold">
             <Link href={`/`} className="text-xl font-semibold hover:underline" title="Home page">
               {personalInfo.name}
             </Link>
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">{personalInfo.role}</p>
+          <p className="text-gray-400">{personalInfo.role}</p>
           <p className="mt-2 text-sm">{personalInfo.description}</p>
         </div>
         <div className="mb-6">
@@ -66,7 +66,7 @@ export function Sidebar() {
       </header>
 
       {/* Mobile Sidebar (Sticky Header with Hamburger Menu) */}
-      <aside className="p-4 px-4 md:hidden fixed top-0 inset-x-0 bg-gray-100 dark:bg-gray-800 z-50">
+      <aside className="p-4 px-4 md:hidden fixed top-0 inset-x-0 bg-gray-800 z-50">
         <div className="flex justify-between items-center">
           <div>
             <h2 className="text-xl font-bold">
@@ -74,7 +74,7 @@ export function Sidebar() {
                 {personalInfo.name}
               </Link>
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{personalInfo.role}</p>
+            <p className="text-sm text-gray-400">{personalInfo.role}</p>
           </div>
 
           {/* Mobile Menu Button */}

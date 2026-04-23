@@ -14,7 +14,7 @@ export default function Header() {
   }
 
   return (
-    <header className="fixed w-full bg-gray-100 dark:bg-gray-800 z-50 backdrop-filter backdrop-blur-sm">
+    <header className="fixed w-full bg-gray-800 z-50 backdrop-filter backdrop-blur-sm">
       <div className="p-2 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">

@@ -9,7 +9,7 @@ import BlogPostItem from '@components/Blog/BlogPost';
 import { getAllTags } from '@utils/functions/blog/tags/getAllTags';
 import { PostItem } from '@data/blog/interfaces/PostMetadata';
 
-const POSTS_PER_PAGE = 10
+const POSTS_PER_PAGE = 3
 
 export async function generateStaticParams() {
 

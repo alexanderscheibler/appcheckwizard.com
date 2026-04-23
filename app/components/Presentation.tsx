@@ -27,6 +27,8 @@ import { NavIconNext } from "@components/Slides/Primitives/NavIconNext";
 import { NavIconPrev } from "@components/Slides/Primitives/NavIconPrev";
 import { NavIconExitFullscreen } from "@components/Slides/Primitives/NavIconExitFullscreen";
 import { NavIconFullscreen } from "@components/Slides/Primitives/NavIconFullscreen";
+import localFont from "next/font/local";
+import { Josefin_Sans } from "next/font/google";
 
 // ─── Dynamic Slide Imports ─────────────────────────────────────────────────────
 const CoverSlide = dynamic(() => import('@components/Slides/Renderers/CoverSlide'));
@@ -43,6 +45,19 @@ const ContentSplitBoxSlide = dynamic(() => import('@components/Slides/Renderers/
 const ToolkitSlide = dynamic(() => import('@components/Slides/Renderers/ToolkitSlide'));
 const ContactSlide = dynamic(() => import('@components/Slides/Renderers/ContactSlide'));
 const ReferencesSlide = dynamic(() => import('@components/Slides/Renderers/ReferencesSlide'));
+
+const josefin = Josefin_Sans({
+  subsets: ["latin"],
+  variable: "--font-josefin",
+  display: "swap",
+});
+
+const parchment = localFont({
+  src: '../../app/fonts/ParchmentMF.woff2',
+  variable: '--font-parchment',
+  display: 'block',
+  fallback: ['Papyrus', 'fantasy', 'serif']
+});
 
 // ─── Slide Dispatcher & Wrapper ────────────────────────────────────────────────
 function SlideRenderer({ slide }: { slide: Slide }) {
@@ -333,12 +348,14 @@ function PresentationCore({ slides, initialSlide, basePath }: { slides: Slide[],
 // ─── Default Export ────────────────────────────────────────────────────────────
 export default function Presentation({ slides, initialSlide = 0, basePath }: { slides: Slide[], initialSlide?: number, basePath: string }) {
   return (
-    <Suspense fallback={
-      <div style={{ width: '100%', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1a1a1a', color: 'white' }}>
-        Loading Presentation...
-      </div>
-    }>
-      <PresentationCore slides={slides} initialSlide={initialSlide} basePath={basePath} />
-    </Suspense>
+    <div className={`${josefin.variable} ${parchment.variable} presentation-wrapper`} style={{ width: '100%', height: '100%' }}>
+      <Suspense fallback={
+        <div style={{ width: '100%', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1a1a1a', color: 'white' }}>
+          Loading Presentation...
+        </div>
+      }>
+        <PresentationCore slides={slides} initialSlide={initialSlide} basePath={basePath} />
+      </Suspense>
+    </div>
   );
 }

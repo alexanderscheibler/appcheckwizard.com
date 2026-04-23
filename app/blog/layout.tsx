@@ -1,27 +1,22 @@
 import type { Metadata } from 'next';
-import { Montserrat } from 'next/font/google'
 import '../globals.css';
 import './blog.css';
 import { Sidebar } from '@components/Blog/Sidebar'
 import Head from '@components/Blog/Head';
-
-const montserrat = Montserrat({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'AppCheckWizard | Blog - Senior Software Developer & QA Tester',
   description: 'Senior Software Developer and QA Tester, expertise in JavaScript, Python and Exploratory Testing for mobile applications.',
 };
 
-export default function RootLayout({
+export default function BlogLayout({
                                      children,
                                    }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-    <Head />
-    <body className={montserrat.className}>
-    <div className="bg-gray-900">
+    <div className="bg-gray-900 min-h-screen">
+      <Head />
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <main className="flex-1 overflow-y-auto md:ml-[18.2rem]">
@@ -31,7 +26,5 @@ export default function RootLayout({
         </main>
       </div>
     </div>
-    </body>
-    </html>
   )
 }

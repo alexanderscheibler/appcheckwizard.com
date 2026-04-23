@@ -42,7 +42,7 @@ export default async function BlogPost({ post }: Readonly<BlogPostProps>) {
           prose-ol:text-gray-300
           prose-li:text-gray-300
           prose-strong:text-gray-300
-          prose-a:text-gray-300 prose-a:underline hover:prose-a:text-blue-500
+           prose-a:underline prose-a:text-gray-300
           prose-blockquote:text-gray-300
           prose-code:text-gray-300
           prose-ul:list-disc
