@@ -64,7 +64,8 @@ export async function submitCommentAction(formData: FormData): Promise<SubmitCom
     return { success: true }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error("Validation error:", error.errors)
+      const flattened = z.flattenError(error);
+      console.error("Validation errors:", flattened.fieldErrors);
       return { success: false, error: "Invalid submission data" }
     }
 
