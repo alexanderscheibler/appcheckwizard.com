@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 import { ContactSubmission } from "@data/interfaces/Contact";
-import { CommentSubmission } from "@data/interfaces/Comments";
+import { CommentSubmission, PublicComment } from "@data/interfaces/Comments";
 
 const supabaseUrl = process.env.SUPABASE_URL
 const supabasePublishableKey = process.env.SUPABASE_PUBLISHABLE_KEY

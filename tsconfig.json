@@ -52,7 +52,8 @@
     "**/*.tsx",
     "jest.config.ts",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "eslint.config.mts"
   ],
   "exclude": [
     "node_modules"

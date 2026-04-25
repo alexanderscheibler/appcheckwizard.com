@@ -13,6 +13,7 @@ interface FormData {
   email: string
   comment: string
   phone: string
+  postSlug: string
 }
 
 export default function CommentForm({ postSlug }: CommentFormProps) {
@@ -20,7 +21,8 @@ export default function CommentForm({ postSlug }: CommentFormProps) {
     name: "",
     email: "",
     comment: "",
-    phone: ""
+    phone: "",
+    postSlug: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
@@ -72,19 +74,20 @@ export default function CommentForm({ postSlug }: CommentFormProps) {
     setErrorMessage("")
 
     // Create FormData for server action
+    // Map UI state to the exact keys expected by the Zod Schema
     const serverFormData = new FormData()
+    serverFormData.append("post_slug", postSlug)
     serverFormData.append("name", formData.name)
     serverFormData.append("email", formData.email)
     serverFormData.append("comment", formData.comment)
     serverFormData.append("phone", formData.phone)
-    serverFormData.append("postSlug", postSlug)
 
     try {
       const result = await submitCommentAction(serverFormData)
 
       if (result.success) {
         setSubmitStatus("success")
-        setFormData({ name: "", email: "", comment: "", phone: "" })
+        setFormData({ name: "", email: "", comment: "", phone: "", postSlug: "" })
         setCommentLength(0)
       } else {
         setErrorMessage(result.error || "Unable to submit your comment at this time")
@@ -105,8 +108,8 @@ export default function CommentForm({ postSlug }: CommentFormProps) {
       <div>
         <h2 className="text-2xl font-bold pt-12 mb-4">Add your comment</h2>
         <div className="mb-4 p-6 rounded bg-green-800 text-green-100">
-          <p className="font-semibold mb-2">Thank you for your comment!</p>
-          <p>Thank you for your thoughts! Your comment has been received and is awaiting moderation. It will appear once approved.</p>
+          <p className="font-semibold mb-2">Thank you for your thoughts!</p>
+          <p>Your comment has been received and is awaiting moderation. It will appear once approved.</p>
         </div>
       </div>
     )
@@ -190,7 +193,7 @@ export default function CommentForm({ postSlug }: CommentFormProps) {
             placeholder="Your Comment"
             value={formData.comment}
             onChange={(e) => handleInputChange("comment", e.target.value)}
-            maxLength={2000}
+            maxLength={1024}
             disabled={isSubmitting}
             required
           ></textarea>

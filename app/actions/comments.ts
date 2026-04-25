@@ -1,75 +1,36 @@
 "use server"
 
 import { z } from "zod"
-import { headers } from "next/headers"
-import { insertComment } from "@utils/db/supabase"
-import CommentSchema from "@utils/schemas/CommentSchema"
+import { insertComment } from "@/utils/db/supabase"
+import { COMMENTS_RATE_LIMIT } from "@utils/functions/security";
+import { createSafeAction } from "@actions/createSafeAction";
 
-interface SubmitCommentResult {
-  success: boolean
-  error?: string
-}
+const CommentSchema = z.object({
+  post_slug: z.string().min(1),
+  author_name: z.string().min(2).max(100),
+  author_email: z.string().regex(z.regexes.rfc5322Email),
+  content: z.string().min(10).max(1024),
+  phone: z.string(),
+});
 
-export async function submitCommentAction(formData: FormData): Promise<SubmitCommentResult> {
-  try {
-    const rawData = {
-      name: (formData.get("name") as string) || "",
-      email: (formData.get("email") as string) || "",
-      content: (formData.get("comment") as string) || "",
-      postSlug: (formData.get("postSlug") as string) || "",
-      phone: (formData.get("phone") as string) || "", // Honeypot
-    }
-
-    // Validate Data with Zod schema
-    const validatedData = CommentSchema.parse(rawData)
-
-    // Honeypot check
-    if (validatedData.phone && validatedData.phone.trim() !== "") {
-      console.warn("Honeypot triggered - potential bot submission")
-      return { success: true } // Fake success for bots
-    }
-
-    // Get headers for basic security checks
-    const headersList = await headers()
-    const userAgent = headersList.get("user-agent") || "unknown"
-    const origin = headersList.get("origin")
-
-    // Origin validation
-    const allowedOrigins = [
-      "http://localhost:3000",
-      "https://www.appcheckwizard.com",
-      "https://appcheckwizard.com"
-    ]
-
-    if (origin && !allowedOrigins.some((allowed) => origin.startsWith(allowed))) {
-      console.warn("Blocked request from unauthorized origin:", origin)
-      return { success: false, error: "Unauthorized origin" }
-    }
-
-    // User agent validation
-    if (!userAgent || userAgent === "unknown") {
-      console.warn("Blocked request - missing user agent")
-      return { success: false, error: "Invalid request" }
-    }
-
-    // Save comment to database
+export const submitCommentAction = createSafeAction(
+  CommentSchema,
+  COMMENTS_RATE_LIMIT,
+  "comment",
+  "Invalid submission data",
+  ["author_name", "content"], // Only sanitize these two
+  (fd) => ({
+    post_slug: (fd.get("post_slug") as string) ?? "",
+    author_name: (fd.get("name") as string) ?? "",
+    author_email: (fd.get("email") as string) ?? "",
+    content: (fd.get("comment") as string) ?? "",
+    phone: "",
+  }),
+  async (data, security) => {
     await insertComment({
-      post_slug: validatedData.postSlug,
-      author_name: validatedData.name,
-      author_email: validatedData.email,
-      content: validatedData.content,
-      user_agent: userAgent,
-    })
-
-    return { success: true }
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      const flattened = z.flattenError(error);
-      console.error("Validation errors:", flattened.fieldErrors);
-      return { success: false, error: "Invalid submission data" }
-    }
-
-    console.error("Unexpected error in submitCommentAction:", error)
-    return { success: false, error: "Submission failed" }
+      ...data,
+      user_agent: security.headersList.get("user-agent") ?? "unknown",
+    });
+    return { success: true };
   }
-}
+);

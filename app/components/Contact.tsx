@@ -3,12 +3,13 @@
 import type React from "react"
 
 import { useState } from "react"
+import { submitContactAction } from "@actions/contact";
 
 interface FormData {
   name: string
   email: string
   message: string
-  _gotcha: string
+  phone: string
 }
 
 export default function Contact() {
@@ -17,7 +18,7 @@ export default function Contact() {
     name: "",
     email: "",
     message: "",
-    _gotcha: ""
+    phone: ""
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
@@ -58,22 +59,22 @@ export default function Contact() {
     setErrorMessage("")
 
     try {
-      // Send data to the API
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
+      // Create FormData to pass to the Server Action
+      const serverFormData = new FormData()
+      serverFormData.append("name", formData.name)
+      serverFormData.append("email", formData.email)
+      serverFormData.append("message", formData.message)
+      serverFormData.append("phone", formData.phone)
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to submit form')
+      // Call the server action directly (this replaces the fetch call!)
+      const result = await submitContactAction(serverFormData)
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to submit form')
       }
 
       setSubmitStatus("success")
-      setFormData({ name: "", email: "", message: "", _gotcha: "" })
+      setFormData({ name: "", email: "", message: "", phone: "" })
       setMessageLength(0)
     } catch (error: unknown) {
       console.error("Error submitting form:", error)
@@ -138,9 +139,9 @@ export default function Contact() {
             </div>
             <input
               type="text"
-              name="_gotcha"
-              value={formData._gotcha}
-              onChange={(e) => handleInputChange("_gotcha", e.target.value)}
+              name="phone"
+              value={formData.phone}
+              onChange={(e) => handleInputChange("phone", e.target.value)}
               className="hidden"
               aria-hidden="true"
               tabIndex={-1}

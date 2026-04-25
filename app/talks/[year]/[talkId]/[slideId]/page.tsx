@@ -10,9 +10,8 @@ type Props = {
 
 async function getSlides(fullTalkId: string) {
   try {
-    const module = await import(`@data/talks/${fullTalkId}/SlidesData`);
-    return module.default;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const talksModule = await import(`@data/talks/${fullTalkId}/SlidesData`);
+    return talksModule.default;
   } catch (error) {
     return null;
   }
