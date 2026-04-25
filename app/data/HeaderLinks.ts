@@ -6,8 +6,8 @@ interface HeaderLink {
 
 export const links: HeaderLink[] = [
   { href: '/#home', label: 'Home', ariaLabel: 'Home' },
-  { href: '/#help', label: 'Skills', ariaLabel: 'Help. What can I do' },
+  { href: '/#help', label: 'Skills', ariaLabel: 'Help. What can I do?' },
   { href: '/#talks', label: 'Talks', ariaLabel: 'Talks. Where have I spoken?' },
-  { href: '/#projects', label: 'Projects', ariaLabel: 'Projects. What have I done' },
+  { href: '/#projects', label: 'Projects', ariaLabel: 'Projects. What have I done?' },
   { href: '/#contact', label: 'Contact', ariaLabel: 'Contact' },
 ];

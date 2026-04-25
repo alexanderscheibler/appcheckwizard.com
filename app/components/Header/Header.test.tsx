@@ -19,23 +19,31 @@ describe('Header', () => {
     render(<Header />);
     const homeLinkElement = screen.getByRole('link', { name: /Home/i });
     expect(homeLinkElement).toBeInTheDocument();
-    expect(homeLinkElement).toHaveAttribute('href', '#home');
+    expect(homeLinkElement).toHaveAttribute('href', '/#home');
   });
 
   it('renders Skills link', () => {
     render(<Header />);
 
-    const skillsLinkElement = screen.getByRole("link", {name: "Help. What can I do" })
+    const skillsLinkElement = screen.getByRole("link", {name: "Help. What can I do?" })
     expect(skillsLinkElement).toBeInTheDocument();
-    expect(skillsLinkElement).toHaveAttribute('href', '#help');
+    expect(skillsLinkElement).toHaveAttribute('href', '/#help');
+  });
+
+  it('renders Talks link', () => {
+    render(<Header />);
+
+    const skillsLinkElement = screen.getByRole("link", {name: "Talks. Where have I spoken?" })
+    expect(skillsLinkElement).toBeInTheDocument();
+    expect(skillsLinkElement).toHaveAttribute('href', '/#talks');
   });
 
   it('renders Projects link', () => {
     render(<Header />);
 
-    const skillsLinkElement = screen.getByRole("link", {name: "Projects. What have I done" })
+    const skillsLinkElement = screen.getByRole("link", {name: "Projects. What have I done?" })
     expect(skillsLinkElement).toBeInTheDocument();
-    expect(skillsLinkElement).toHaveAttribute('href', '#projects');
+    expect(skillsLinkElement).toHaveAttribute('href', '/#projects');
   });
 
   it('renders Contact link', () => {
@@ -43,7 +51,7 @@ describe('Header', () => {
 
     const skillsLinkElement = screen.getByRole("link", {name: "Contact" })
     expect(skillsLinkElement).toBeInTheDocument();
-    expect(skillsLinkElement).toHaveAttribute('href', '#contact');
+    expect(skillsLinkElement).toHaveAttribute('href', '/#contact');
   });
 
   it('does render mobile menu button on mobile', () => {
