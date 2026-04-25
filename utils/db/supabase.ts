@@ -1,7 +1,8 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js"
+import { ContactSubmission } from "@data/interfaces/Contact";
 
 const supabaseUrl = process.env.SUPABASE_URL
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const supabasePublishableKey = process.env.SUPABASE_PUBLISHABLE_KEY
 
 let serverSupabaseInstance: SupabaseClient | null = null
 
@@ -14,37 +15,26 @@ export class SupabaseConfigurationError extends Error {
 }
 
 export class SupabaseDatabaseError extends Error {
-  constructor(
-    message: string,
-    public readonly originalError?: unknown,
-  ) {
-    super(message)
+  constructor(message: string, options?: ErrorOptions) {
+    super(message, options)
     this.name = "SupabaseDatabaseError"
   }
 }
 
 /**
- * Get or create the server-side Supabase client (singleton pattern)
- * Use service role key for elevated permissions
+ * Get or create the Supabase client using the Publishable Key (singleton pattern)
+ * Relies on RLS policies for security instead of service role
  */
-export const getServerSupabase = () => {
-  if (serverSupabaseInstance) {
-    return serverSupabaseInstance
+export const getSupabaseClient = () => {
+  if (serverSupabaseInstance) return serverSupabaseInstance
+
+  if (!supabaseUrl || !supabasePublishableKey) {
+    throw new SupabaseConfigurationError("Supabase URL and Publishable Key environment variables are required")
   }
 
-  if (!supabaseUrl) {
-    throw new SupabaseConfigurationError("SUPABASE_URL environment variable is required")
-  }
-
-  if (!supabaseServiceKey) {
-    throw new SupabaseConfigurationError(
-      "SUPABASE_SERVICE_ROLE_KEY environment variable is required for server operations",
-    )
-  }
-
-  serverSupabaseInstance = createClient(supabaseUrl, supabaseServiceKey, {
+  // Initialize with the Publishable Key
+  serverSupabaseInstance = createClient(supabaseUrl, supabasePublishableKey, {
     auth: {
-      autoRefreshToken: false,
       persistSession: false,
     },
   })
@@ -52,20 +42,13 @@ export const getServerSupabase = () => {
   return serverSupabaseInstance
 }
 
-export interface ContactSubmission {
-  name: string
-  email: string
-  message: string
-  user_agent?: string
-}
-
 /**
  * Insert a contact form submission into the database
  */
 export async function insertContactSubmission(data: ContactSubmission) {
-  const serverSupabase = getServerSupabase()
+  const supabase = getSupabaseClient()
 
-  const { error } = await serverSupabase.from("contact_submissions").insert([
+  const { error } = await supabase.from("contact_submissions").insert([
     {
       name: data.name.trim(),
       email: data.email.trim(),
@@ -84,7 +67,7 @@ export async function insertContactSubmission(data: ContactSubmission) {
       hint: error.hint,
     })
 
-    throw new SupabaseDatabaseError("Failed to save contact submission", error)
+    throw new SupabaseDatabaseError("Failed to save contact submission", { cause: error })
   }
 
   return { success: true }
