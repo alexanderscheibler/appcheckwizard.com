@@ -14,6 +14,7 @@
 import * as securityUtils from "@utils/functions/security";
 import * as supabase from "@utils/db/supabase";
 import { submitContactAction } from "@actions/contact";
+import type { ActionResult } from "@data/interfaces/ActionResult"
 
 jest.mock("@utils/functions/security", () => ({
   verifySecurityPipeline: jest.fn(),

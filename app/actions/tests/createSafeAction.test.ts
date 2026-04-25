@@ -14,17 +14,12 @@
 import * as securityUtils from "@utils/functions/security";
 import { z } from "zod";
 import { createSafeAction } from "@actions/createSafeAction";
+import type { ActionResult } from "@data/interfaces/ActionResult"
 
 jest.mock("@utils/functions/security", () => ({
   verifySecurityPipeline: jest.fn(),
   sanitize: jest.fn((val) => `sanitized_${val}`), // Mock transformation
 }));
-
-// Define the interface to the server action return types
-interface ActionResult {
-  success: boolean;
-  error?: string;
-}
 
 describe("createSafeAction Core Wrapper", () => {
   const mockSchema = z.object({

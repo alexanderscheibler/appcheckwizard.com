@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { submitCommentAction } from "@actions/comments"
+import type { ActionResult } from "@data/interfaces/ActionResult"
 
 interface CommentFormProps {
   postSlug: string
@@ -83,7 +84,7 @@ export default function CommentForm({ postSlug }: CommentFormProps) {
     serverFormData.append("phone", formData.phone)
 
     try {
-      const result = await submitCommentAction(serverFormData)
+      const result = (await submitCommentAction(serverFormData)) as ActionResult;
 
       if (result.success) {
         setSubmitStatus("success")

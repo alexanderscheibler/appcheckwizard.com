@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import { submitContactAction } from "@actions/contact";
+import type { ActionResult } from "@data/interfaces/ActionResult"
 
 interface FormData {
   name: string
@@ -67,7 +68,7 @@ export default function Contact() {
       serverFormData.append("phone", formData.phone)
 
       // Call the server action directly (this replaces the fetch call!)
-      const result = await submitContactAction(serverFormData)
+      const result = (await submitContactAction(serverFormData)) as ActionResult;
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to submit form')

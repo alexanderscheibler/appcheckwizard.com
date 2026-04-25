@@ -1,28 +1,20 @@
-import js from "@eslint/js";
-import globals from "globals";
-import tseslint from "typescript-eslint";
-import pluginReact from "eslint-plugin-react";
-import { defineConfig } from "eslint/config";
+import { defineConfig, globalIgnores } from 'eslint/config'
+import nextVitals from 'eslint-config-next'
+import prettierConfig from "eslint-config-prettier";
 
 export default defineConfig([
+  ...nextVitals,
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    plugins: { js },
-    extends: ["js/recommended"],
-    languageOptions: { globals: globals.browser }
-  },
-  tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
-  {
-    settings: {
-      react: {
-        version: "detect",
-      },
-    },
     rules: {
-      // Disable the old React import requirement for modern JSX
       "react/react-in-jsx-scope": "off",
-      "react/jsx-uses-react": "off"
+      "react/jsx-uses-react": "off",
     }
-  }
-]);
+  },
+  globalIgnores([
+    '.next/**',
+    'out/**',
+    'build/**',
+    'next-env.d.ts',
+  ]),
+  prettierConfig,
+])
