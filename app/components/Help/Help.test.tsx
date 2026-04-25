@@ -113,6 +113,6 @@ describe('Help', () => {
 
     const chevronLink = screen.getByRole('link', { name: /What have I worked on\?/i });
     expect(chevronLink).toBeInTheDocument();
-    expect(chevronLink).toHaveAttribute('href', '/#projects');
+    expect(chevronLink).toHaveAttribute('href', '#projects');
   });
 });
