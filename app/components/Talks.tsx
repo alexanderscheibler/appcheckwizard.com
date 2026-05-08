@@ -62,6 +62,7 @@ export default function Talks() {
                     {/* Slides — navigates to the presentation */}
                     <Link
                       href={talk.slidesUrl}
+                      aria-label={`View slides for ${talk.event}`}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-700 hover:bg-indigo-600 text-white text-xs font-medium rounded-lg transition-colors"
                     >
                       <MonitorPlay size={13} />
