@@ -43,9 +43,9 @@ export default function Talks() {
                 {/* Card body */}
                 <div className="p-4 flex flex-col flex-1">
                   <h3 className="text-white font-medium">{talk.title}</h3>
-                  <p className="text-gray-400 text-sm mt-1">{talk.event}</p>
+                  <p className="text-gray-100 text-sm mt-1">{talk.event}</p>
                   {talk.date && (
-                    <p className="text-gray-500 text-xs mt-1">{talk.date}</p>
+                    <p className="text-gray-400 text-xs mt-1">{talk.date}</p>
                   )}
 
                   {/* Action buttons */}

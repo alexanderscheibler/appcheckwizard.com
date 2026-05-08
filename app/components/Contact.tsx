@@ -139,10 +139,10 @@ export default function Contact() {
             <label htmlFor="_gotcha" aria-hidden="true" className="sr-only">Leave this empty</label>
             <input
               type="text"
+              id="_gotcha"
               name="_gotcha"
               value={formData._gotcha}
               onChange={(e) => handleInputChange("_gotcha", e.target.value)}
-              className="hidden"
               aria-hidden="true"
               tabIndex={-1}
               autoComplete="off"
