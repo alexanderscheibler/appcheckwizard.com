@@ -8,9 +8,9 @@ export default function Hero() {
           <h1 className="text-4xl lg:text-6xl font-bold mb-4 animate-fade-in break-words">
             AppCheckWizard
           </h1>
-          <p className="text-2xl lg:text-2xl mb-8 animate-slide-in">
+          <h2 className="text-2xl lg:text-2xl mb-8 animate-slide-in">
             Backend Developer <br />+<br /> QA Tester
-          </p>
+          </h2>
           <p className="text-base lg:text-2xl sm:text-2xl mb-12 animate-fade-in">
             Coding, testing, monitoring, and improving processes to keep your business moving forward.
             Expertise in JavaScript, Python, and Exploratory Testing for mobile applications.

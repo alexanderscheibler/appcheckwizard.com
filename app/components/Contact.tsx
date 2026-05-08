@@ -136,6 +136,7 @@ export default function Contact() {
                 required
               />
             </div>
+            <label htmlFor="_gotcha" aria-hidden="true" className="sr-only">Leave this empty</label>
             <input
               type="text"
               name="_gotcha"
@@ -145,7 +146,7 @@ export default function Contact() {
               aria-hidden="true"
               tabIndex={-1}
               autoComplete="off"
-              style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px" }}
+              style={{position: "absolute", left: "-9999px", width: "1px", height: "1px"}}
             />
             <div>
               <div className="flex items-center justify-between mb-2">
@@ -170,6 +171,7 @@ export default function Contact() {
                 aria-describedby="message-hint"
                 required>
               </textarea>
+              <span id="message-hint" className="sr-only">Maximum 1024 characters</span>
             </div>
             {submitStatus === "success" && (
               <div className="p-4 bg-green-50 border border-green-200 rounded-md">
@@ -184,7 +186,8 @@ export default function Contact() {
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm text-green-800">Thank you for your message! I&apos;ll get back to you soon.</p>
+                    <p className="text-sm text-green-800">Thank you for your message! I&apos;ll get back to you
+                      soon.</p>
                   </div>
                 </div>
               </div>
@@ -224,7 +227,8 @@ export default function Contact() {
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                   >
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            strokeWidth="4"></circle>
                     <path
                       className="opacity-75"
                       fill="currentColor"
