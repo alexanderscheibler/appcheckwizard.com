@@ -23,29 +23,49 @@ export default function Projects() {
               key={project.id}
               className="group flex flex-col bg-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-gray-500 transition-all hover:shadow-lg hover:shadow-black/40 text-left h-full"
             >
-              {/* Main Clickable Area for Modal */}
-              <div
-                className="cursor-pointer flex-grow flex flex-col"
-                onClick={() => setOpenModal(project.id)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setOpenModal(project.id);
-                  }
-                }}
-                aria-label={`View details for ${project.title}`}
-              >
-                <CustomImage
-                  src={project.imgSrc}
-                  alt={project.imgAlt}
-                  width={600}
-                  height={400}
-                  className="w-full h-48 object-cover object-top group-hover:opacity-80 transition-opacity border-b border-gray-700/50"
-                />
+              <div className="flex-grow flex flex-col">
 
-                <div className="p-4 flex flex-col flex-grow">
+                {/* 1. Image Area -> Opens href */}
+                {project.href ? (
+                  <a
+                    href={project.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full"
+                    aria-label={`Visit live site for ${project.title}`}
+                  >
+                    <CustomImage
+                      src={project.imgSrc}
+                      alt={project.imgAlt}
+                      width={600}
+                      height={400}
+                      className="w-full h-48 object-cover object-top group-hover:opacity-80 transition-opacity border-b border-gray-700/50"
+                    />
+                  </a>
+                ) : (
+                  <CustomImage
+                    src={project.imgSrc}
+                    alt={project.imgAlt}
+                    width={600}
+                    height={400}
+                    className="w-full h-48 object-cover object-top group-hover:opacity-80 transition-opacity border-b border-gray-700/50"
+                  />
+                )}
+
+                {/* 2. Text Content Area -> Opens Modal */}
+                <div
+                  className="p-4 flex flex-col flex-grow cursor-pointer"
+                  onClick={() => setOpenModal(project.id)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setOpenModal(project.id);
+                    }
+                  }}
+                  aria-label={`View details for ${project.title}`}
+                >
                   <h3 className="text-white font-bold text-lg">{project.title}</h3>
                   {project.description && (
                     <p className="mt-2 text-sm text-gray-300 leading-relaxed">{project.description}</p>
@@ -57,6 +77,8 @@ export default function Projects() {
 
               {/* Card Footer for Links */}
               <div className="px-4 py-3 mt-auto flex items-center justify-between border-t border-gray-700/50 bg-gray-800/50">
+
+                {/* 3. Read More -> Opens Modal */}
                 <button
                   onClick={() => setOpenModal(project.id)}
                   className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
@@ -64,13 +86,13 @@ export default function Projects() {
                   Read more
                 </button>
 
-                {project.href && (
+                {/* 4. View Source -> Opens GitHub Repo */}
+                {project.source && (
                   <a
-                    href={project.href}
+                    href={project.source}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1"
-                    onClick={(e) => e.stopPropagation()} // Prevents the modal from opening when clicking the link
                   >
                     View Source ↗
                   </a>
