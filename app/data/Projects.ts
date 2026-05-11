@@ -30,7 +30,7 @@ export const projects: Project[] = [
     id: "gnb_news",
     title: "GNB News Digest",
     description: " A simple service providing user subscription through e-mail and daily delivery from the news published by the Government of New Brunswick.",
-    long_description: "A simple service providing:.\n" +
+    long_description: "A simple bilingual service providing:\n" +
       "- User subscription through e-mail.\n" +
       "- Daily e-mail delivery from the news published by the Government of New Brunswick.\n" +
       "\n" +
