@@ -35,7 +35,7 @@ export const projects: Project[] = [
       "- Daily e-mail delivery from the news published by the Government of New Brunswick.\n" +
       "\n" +
       "Tech:\n" +
-      "- Scrapping with Python (requests + BeautifulSoup).\n" +
+      "- Scraping with Python (requests + BeautifulSoup).\n" +
       "- API with Cloudflare Workers (TypeScript).\n" +
       "- PostgreSQL Database with Neon.\n" +
       "- E-mail service with Resend.\n" +
