@@ -23,8 +23,25 @@ export const projects: Project[] = [
     href: "https://alexanderscheibler.github.io/travel/",
     source: "https://github.com/alexanderscheibler/travel",
     imgSrc: "/images/projects/travel-desktop-chrome.png",
-    imgAlt: "Screenshot of the Best Destinations website",
+    imgAlt: "Best Destinations website",
     tech: "HTML + Pure CSS + JavaScript",
+  },
+  {
+    id: "productpassport",
+    title: "Check Product Passport",
+    description: "Processes and serves large-scale Open Food Facts data through a performant API and modern web application.",
+    long_description: "Check Product Passport - scan your products and find Canadian alternatives.\n" +
+      "Tech:\n" +
+      "- FastAPI\n" +
+      "- Vite\n" +
+      "- Tailwind CSS\n" +
+      "- DuckDB\n" +
+      "- Cloudflare",
+    href: "https://www.productpassport.ca/",
+    source: "",
+    imgSrc: "/images/projects/checkproductpassport.png",
+    imgAlt: "Check Product Passport website",
+    tech: "FastAPI, Vite, Tailwind CSS, DuckDB, and Cloudflare.",
   },
   {
     id: "gnb_news",
@@ -43,7 +60,7 @@ export const projects: Project[] = [
     href: "https://gnb-news-digest.appcheckwizard.workers.dev/",
     source: "https://github.com/alexanderscheibler/gnb-news-digest",
     imgSrc: "/images/projects/GNBNewsDigest.png",
-    imgAlt: "Screenshot of the NB News Digest site",
+    imgAlt: "NB News Digest site",
     tech: "Python + Cloudflare Workers + Resend",
   },
   {
@@ -57,7 +74,7 @@ export const projects: Project[] = [
     href: "https://github.com/alexanderscheibler/code_samples/tree/main/Python/cheapest_options",
     source: "https://github.com/alexanderscheibler/code_samples/tree/main/Python/cheapest_options",
     imgSrc: "/images/projects/cheapest_option.png",
-    imgAlt: "Screenshot of the Cheapest Options running",
+    imgAlt: "Cheapest Options running",
     tech: "Python + unittest",
   },
   {
@@ -70,7 +87,7 @@ export const projects: Project[] = [
     href: "https://github.com/alexanderscheibler/code_samples/tree/main/Python/query_api_stock_prices",
     source: "https://github.com/alexanderscheibler/code_samples/tree/main/Python/query_api_stock_prices",
     imgSrc: "/images/projects/query_api.png",
-    imgAlt: "Screenshot of the Query API (Stock Prices) running",
+    imgAlt: "Query API (Stock Prices) running",
     tech: "Python + unittest",
   },
   {
@@ -85,7 +102,7 @@ export const projects: Project[] = [
     href: "https://github.com/alexanderscheibler/code_samples/tree/main/Python/reformat_dates",
     source: "https://github.com/alexanderscheibler/code_samples/tree/main/Python/reformat_dates",
     imgSrc: "/images/projects/reformat_dates.png",
-    imgAlt: "Screenshot of the Reformat Dates running",
+    imgAlt: "Reformat Dates running",
     tech: "Python + pytest",
   },
 ];
